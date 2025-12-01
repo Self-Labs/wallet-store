@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  # --- Backend (Django API) ---
+  api:
+    container_name: store_api
+    build: ./backend
+    command: sh -c "/entrypoint.sh && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8002:8000"
+    networks:
+      - crypto_net
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=${SECRET_KEY}
+      - ALLOWED_HOSTS=*
+      - DJANGO_ALLOWED_HOSTS=*
+      - SQL_ENGINE=django.db.backends.postgresql
+      - DB_NAME=wallet_db
+      - DB_USER=django
+      - DB_PASSWORD=${POSTGRES_PASSWORD}
+      - DB_HOST=crypto_db
+      - DB_PORT=5432
+
+  # --- Frontend (Vite) ---
+  web:
+    container_name: store_web
+    build: ./frontend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "3001:3000"
+    networks:
+      - crypto_net
+    depends_on:
+      - api
+
+networks:
+  crypto_net:
+    external: true

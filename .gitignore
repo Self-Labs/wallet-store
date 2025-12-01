@@ -1,0 +1,25 @@
+# User-specific files
+.env
+*.env
+.DS_Store
+Thumbs.db
+.vscode/
+*.code-workspace
+pycache/
+*.py[cod]
+venv/
+.venv/
+env/
+db.sqlite3
+node_modules/
+build/
+dist/
+npm-debug.log*
+postgres/
+postgres_data/
+*.log
+__pycache__/
+*.py[cod]
+.env
+.vscode/
+.DS_Store
