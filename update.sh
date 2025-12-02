@@ -34,7 +34,7 @@ if [ "$LOCAL" != "$REMOTE" ]; then
 
   echo "🗄️ Rodando Migrations no Banco de Dados..."
   # Garante que novas tabelas criadas no Django sejam aplicadas no Postgres
-  docker exec store_api python manage.py migrate
+  docker exec store-api python manage.py migrate
 
   echo "✅ Atualização aplicada com sucesso em $(date)"
 

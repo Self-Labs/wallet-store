@@ -9,12 +9,12 @@ export default defineConfig({
     port: 3000, // Porta interna
     proxy: {
       '/api': {
-        target: 'http://store_api:8000',
+        target: 'http://store-api:8000',
         changeOrigin: true,
         secure: false,
       },
       '/api-token-auth': {
-        target: 'http://store_api:8000',
+        target: 'http://store-api:8000',
         changeOrigin: true,
         secure: false,
       }
