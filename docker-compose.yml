@@ -26,6 +26,9 @@ services:
   web:
     container_name: store_web
     build: ./frontend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
     ports:
       - "3001:3000"
     networks:
