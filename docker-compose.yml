@@ -4,8 +4,6 @@ services:
     container_name: store_api
     build: ./backend
     command: sh -c "/entrypoint.sh && python manage.py runserver 0.0.0.0:8000"
-    volumes:
-      - ./backend:/app
     ports:
       - "8002:8000"
     networks:
