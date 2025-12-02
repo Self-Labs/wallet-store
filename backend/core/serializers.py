@@ -16,8 +16,12 @@ class ReceitaSerializer(serializers.ModelSerializer):
 class ProdutoSerializer(serializers.ModelSerializer):
     # Mostra os componentes usados (ficha técnica) dentro do produto
     receita = ReceitaSerializer(source='receita_set', many=True, read_only=True)
+    
+    # O Django já sabe buscar o método custo_total() no model porque o nome é igual.
+    custo_total = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
+    
+    # Aqui mantemos o source='lucro_estimado' porque o nome do campo ('lucro') é diferente do model
     lucro = serializers.DecimalField(source='lucro_estimado', max_digits=10, decimal_places=2, read_only=True)
-    custo_total = serializers.DecimalField(source='custo_total', max_digits=10, decimal_places=2, read_only=True)
 
     class Meta:
         model = Produto
