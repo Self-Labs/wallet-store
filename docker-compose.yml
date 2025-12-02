@@ -39,3 +39,4 @@ services:
 networks:
   crypto_net:
     external: true
+    name: crypto_crypto_net
