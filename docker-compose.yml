@@ -16,8 +16,6 @@ services:
       - DB_PASSWORD=${POSTGRES_PASSWORD}
       - DB_HOST=crypto_db
       - DB_PORT=5432
-    depends_on:
-      - crypto_db
     networks:
       - crypto_net
     ports:
