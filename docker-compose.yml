@@ -1,22 +1,39 @@
 services:
+  # --- Banco de Dados (Postgres) ---
+  db:
+    image: postgres:15-alpine
+    container_name: store-db
+    restart: unless-stopped
+    volumes:
+      - /srv/store/postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=walletdb
+      - POSTGRES_USER=django
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    networks:
+      - store_net
+    ports:
+      - "5433:5432" # Porta externa 5433 (evita conflito 5432 do Crypto)
+
   # --- Backend (Django API) ---
   api:
     container_name: store-api
     build: ./backend
-    restart: unless-stopped
     command: sh -c "/entrypoint.sh && python manage.py runserver 0.0.0.0:8000"
     environment:
       - SECRET_KEY=${SECRET_KEY}
-      - ALLOWED_HOSTS=*
+      - ALLOWED_HOSTS=*,store-api,localhost,127.0.0.1
       - DJANGO_ALLOWED_HOSTS=*
       - SQL_ENGINE=django.db.backends.postgresql
       - DB_NAME=walletdb
       - DB_USER=django
       - DB_PASSWORD=${POSTGRES_PASSWORD}
-      - DB_HOST=crypto_db
+      - DB_HOST=store-db
       - DB_PORT=5432
+    depends_on:
+      - db
     networks:
-      - crypto_net
+      - store_net
     ports:
       - "8002:8000"
 
@@ -28,11 +45,10 @@ services:
     depends_on:
       - api
     networks:
-      - crypto_net
+      - store_net
     ports:
       - "3001:3000"
 
 networks:
-  crypto_net:
-    external: true
-    name: crypto_crypto_net
+  store_net:
+    driver: bridge

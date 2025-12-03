@@ -14,7 +14,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dev-key')
 # DEBUG deve ser False em produção, mas True se a variável de ambiente disser
 DEBUG = bool(int(os.environ.get('DEBUG', 0)))
 
-ALLOWED_HOSTS = ['*'] # Aceita qualquer IP (o Orange Pi precisa disso)
+# Adicione store-api na lista para evitar o erro 400
+ALLOWED_HOSTS = ['*', 'store-api', 'localhost', '127.0.0.1']
 
 # --- APLICAÇÕES ---
 INSTALLED_APPS = [
