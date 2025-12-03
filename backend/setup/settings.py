@@ -63,7 +63,7 @@ WSGI_APPLICATION = 'setup.wsgi.application'
 
 # --- BANCO DE DADOS (POSTGRES) ---
 # Lê as variáveis do docker-compose.yml
-DB_NAME = os.environ.get('DB_NAME', 'wallet_db')
+DB_NAME = os.environ.get('DB_NAME', 'walletdb')
 DB_USER = os.environ.get('DB_USER', 'django')
 DB_PASSWORD = os.environ.get('DB_PASSWORD', 'password')
 DB_HOST = os.environ.get('DB_HOST', 'crypto_db')
