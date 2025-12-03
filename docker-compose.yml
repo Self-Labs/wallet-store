@@ -6,7 +6,6 @@ services:
     restart: unless-stopped
     command: sh -c "/entrypoint.sh && python manage.py runserver 0.0.0.0:8000"
     environment:
-      - DEBUG=1
       - SECRET_KEY=${SECRET_KEY}
       - ALLOWED_HOSTS=*
       - DJANGO_ALLOWED_HOSTS=*
