@@ -33,8 +33,9 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware', # CORS deve vir cedo
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -47,7 +48,7 @@ ROOT_URLCONF = 'setup.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -67,7 +68,7 @@ WSGI_APPLICATION = 'setup.wsgi.application'
 DB_NAME = os.environ.get('DB_NAME', 'walletdb')
 DB_USER = os.environ.get('DB_USER', 'django')
 DB_PASSWORD = os.environ.get('DB_PASSWORD', 'password')
-DB_HOST = os.environ.get('DB_HOST', 'crypto_db')
+DB_HOST = os.environ.get('DB_HOST', 'store-db')
 DB_PORT = os.environ.get('DB_PORT', '5432')
 
 DATABASES = {
@@ -92,8 +93,10 @@ TIME_ZONE = 'America/Sao_Paulo'
 USE_I18N = True
 USE_TZ = True
 
+# Static files (CSS, JavaScript, Images)
 STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = BASE_DIR / 'staticfiles' # Pasta onde o WhiteNoise vai buscar
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage' # Otimização
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # --- CORS (REACT) ---

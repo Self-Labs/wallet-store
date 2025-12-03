@@ -10,7 +10,8 @@ while ! nc -z $DB_HOST 5432; do
 done
 echo "PostgreSQL conectado!"
 
-# Roda as migrações (se houver)
+# Aplica Migrations e coleta arquivos estáticos
+python manage.py collectstatic --noinput
 python manage.py makemigrations
 python manage.py migrate
 

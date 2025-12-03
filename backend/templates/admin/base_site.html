@@ -1,0 +1,93 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Wallet Store Admin{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">WALLET STORE <span style="color: #00FFA3;">ADMIN</span></a></h1>
+{% endblock %}
+
+{% block extrastyle %}
+<style>
+    /* --- TEMA BLOCKSTREAM EDITION --- */
+    :root {
+        --primary: #00FFA3;       /* Verde Jade Neon */
+        --secondary: #00C2FF;     /* Azul Tech */
+        --bg-dark: #050505;       /* Fundo Preto Profundo */
+        --bg-card: #111111;       /* Fundo Painéis */
+        --text-main: #ffffff;
+        --text-dim: #888888;
+        --border: #2a2a2a;
+    }
+
+    /* Fundo Geral */
+    body, .login {
+        background-color: var(--bg-dark) !important;
+        color: var(--text-main) !important;
+    }
+
+    /* Cabeçalho */
+    #header {
+        background: var(--bg-card) !important;
+        border-bottom: 1px solid var(--primary) !important;
+    }
+    #header a { color: white !important; }
+    #branding h1 { font-weight: bold; letter-spacing: 1px; }
+
+    /* Módulos e Tabelas */
+    .module {
+        background-color: var(--bg-card) !important;
+        border: 1px solid var(--border) !important;
+    }
+    .module caption, .module h2 {
+        background-color: #1a1a1a !important;
+        color: var(--primary) !important;
+    }
+    
+    /* Links */
+    a:link, a:visited { color: var(--primary) !important; }
+    a:hover { color: var(--secondary) !important; }
+
+    /* Botões */
+    .button, input[type=submit], .submit-row input {
+        background: var(--primary) !important;
+        color: black !important;
+        border: none !important;
+        font-weight: bold !important;
+        text-transform: uppercase;
+        transition: opacity 0.2s;
+    }
+    .button:hover, input[type=submit]:hover {
+        opacity: 0.8;
+    }
+    .button.default, input[type=submit].default {
+        background: var(--primary) !important;
+    }
+
+    /* Inputs de Texto */
+    input[type=text], input[type=password], input[type=email], input[type=number], select, textarea {
+        background-color: #000 !important;
+        border: 1px solid var(--border) !important;
+        color: var(--primary) !important;
+        padding: 8px;
+    }
+    input:focus, select:focus, textarea:focus {
+        border-color: var(--primary) !important;
+    }
+
+    /* Tabela de Listagem */
+    #changelist table { border: 1px solid var(--border); }
+    #changelist table thead th {
+        background: #1a1a1a !important;
+        color: var(--primary) !important;
+    }
+    #changelist table tbody tr { background: var(--bg-dark) !important; }
+    #changelist table tbody tr:nth-child(odd) { background: #0a0a0a !important; }
+    #changelist table tbody tr:hover { background: #161616 !important; }
+
+    /* Breadcrumbs (Barra de navegação) */
+    div.breadcrumbs {
+        background: #0a0a0a !important;
+        color: var(--text-dim) !important;
+    }
+</style>
+{% endblock %}

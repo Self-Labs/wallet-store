@@ -19,7 +19,7 @@ services:
   api:
     container_name: store-api
     build: ./backend
-    command: sh -c "/entrypoint.sh && python manage.py runserver 0.0.0.0:8000"
+    command: sh -c "/entrypoint.sh && gunicorn setup.wsgi:application --bind 0.0.0.0:8000"
     environment:
       - SECRET_KEY=${SECRET_KEY}
       - ALLOWED_HOSTS=*,store-api,localhost,127.0.0.1
