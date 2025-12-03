@@ -1,0 +1,146 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block bodyclass %}{{ block.super }} login-page{% endblock %}
+{% block usertools %}{% endblock %}
+{% block nav-global %}{% endblock %}
+{% block nav-sidebar %}{% endblock %}
+{% block content_title %}{% endblock %}
+{% block breadcrumbs %}{% endblock %}
+{% block header %}{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    /* --- Estilos Específicos da Tela de Login --- */
+    
+    /* Centraliza tudo na tela */
+    body.login-page {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        background-color: var(--bg-dark) !important;
+        background-image: radial-gradient(circle at center, #111 0%, #050505 100%); /* Leve gradiente de fundo */
+    }
+
+    /* O Card de Login */
+    .login-box {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border);
+        padding: 40px;
+        width: 100%;
+        max-width: 400px;
+        border-radius: 4px;
+        box-shadow: 0 0 20px rgba(0, 255, 163, 0.1); /* Brilho Neon sutil */
+        text-align: center;
+    }
+
+    /* Cabeçalho do Card */
+    .login-header {
+        margin-bottom: 30px;
+    }
+    .login-header h1 {
+        font-size: 24px;
+        margin: 0;
+        color: var(--text-main);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+    .login-header .neon {
+        color: var(--primary);
+        font-weight: bold;
+    }
+    .login-header p {
+        color: var(--text-dim);
+        font-size: 12px;
+        margin-top: 5px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Formulário */
+    .login-form .form-row {
+        margin-bottom: 20px;
+        text-align: left;
+    }
+    .login-form label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--text-dim);
+        font-size: 12px;
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+    /* Os inputs já pegam o estilo do base_site.html, só ajustamos a largura */
+    .login-form input[type=text], 
+    .login-form input[type=password] {
+        width: 100%;
+        box-sizing: border-box; /* Garante que o padding não estoure a largura */
+    }
+
+    /* Botão de Login */
+    .submit-row {
+        margin-top: 30px;
+    }
+    .submit-row input[type=submit] {
+        width: 100%;
+        padding: 15px;
+        font-size: 16px;
+        letter-spacing: 1px;
+        cursor: pointer;
+    }
+
+    /* Mensagens de Erro */
+    .errornote {
+        background-color: rgba(255, 0, 0, 0.1) !important;
+        border: 1px solid red !important;
+        color: #ff6b6b !important;
+        padding: 10px;
+        margin-bottom: 20px;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-box">
+    <div class="login-header">
+        <h1>Wallet Store <span class="neon">Admin</span></h1>
+        <p>Secure Access // System Online</p>
+    </div>
+
+    {% if form.errors and not form.non_field_errors %}
+    <p class="errornote">
+        {% if form.errors.items|length == 1 %}{% trans "Please correct the error below." %}{% else %}{% trans "Please correct the errors below." %}{% endif %}
+    </p>
+    {% endif %}
+
+    {% if form.non_field_errors %}
+    {% for error in form.non_field_errors %}
+    <p class="errornote">
+        {{ error }}
+    </p>
+    {% endfor %}
+    {% endif %}
+
+    <form action="{{ app_path }}" method="post" id="login-form" class="login-form">{% csrf_token %}
+        <div class="form-row">
+            <label for="id_username">Usuário // ID</label>
+            {{ form.username }}
+            {{ form.username.errors }}
+        </div>
+        <div class="form-row">
+            <label for="id_password">Senha // Password</label>
+            {{ form.password }}
+            {{ form.password.errors }}
+            <input type="hidden" name="next" value="{{ next }}">
+        </div>
+        <div class="submit-row">
+            <input type="submit" value="{% trans 'Acessar Sistema' %}">
+        </div>
+    </form>
+</div>
+{% endblock %}
