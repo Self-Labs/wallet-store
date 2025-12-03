@@ -13,23 +13,35 @@
 {{ block.super }}
 <style>
     html, body {
-        height: 100%;
-        width: 100%;
-        margin: 0;
-        padding: 0;
-        overflow: hidden; /* Evita barras de rolagem */
+        height: 100% !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden; 
     }
 
+    /* Forço body a ser um container Flex de tela cheia */
     body.login-page {
         display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
+        align-items: center !important;     /* Centraliza Verticalmente */
+        justify-content: center !important; /* Centraliza Horizontalmente */
         background-color: var(--bg-dark) !important;
         background-image: radial-gradient(circle at center, #111 0%, #050505 100%);
         font-family: 'Inter', monospace;
     }
 
-    /* --- O Card do Login --- */
+    #container {
+        width: 100% !important;
+        height: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: transparent !important;
+        min-width: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* --- Login Card --- */
     .login-box {
         width: 100%;
         max-width: 380px;
@@ -40,10 +52,9 @@
         box-sizing: border-box;
         box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
         z-index: 10;
-        margin: auto; /* Garante que não tenha margens */
     }
 
-    /* A Barra Verde Neon no Topo */
+    /* --- Barra Verde Neon --- */
     .login-box::before {
         content: '';
         position: absolute;
@@ -175,7 +186,7 @@
         </div>
     </div>
 
-    <h1>System Login</h1>
+    <h1>Store Login</h1>
     <p class="subtitle">SECURE ENVIRONMENT // RESTRICTED ACCESS</p>
 
     {% if form.errors and not form.non_field_errors %}
