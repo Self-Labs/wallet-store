@@ -1,5 +1,9 @@
 {% extends "admin/base.html" %}
-
+{% load static %}
+{% block extrahead %}
+    {{ block.super }}
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+{% endblock %}
 {% block title %}Wallet Store Admin{% endblock %}
 
 {% block branding %}
@@ -8,6 +12,26 @@
 
 {% block extrastyle %}
 <style>
+    /* --- FONTES BLOCKSTREAM (Carregadas do Static) --- */
+    @font-face {
+        font-family: 'Inter';
+        src: url('{% static "fonts/Inter-VariableFont_opsz,wght.ttf" %}') format('truetype');
+        font-weight: 100 900;
+        font-style: normal;
+    }
+    @font-face {
+        font-family: 'Rigid Square';
+        src: url('{% static "fonts/Rigid_Square_Regular.otf" %}') format('opentype');
+        font-weight: 400;
+        font-style: normal;
+    }
+    @font-face {
+        font-family: 'Rigid Square';
+        src: url('{% static "fonts/Rigid_Square_Bold.otf" %}') format('opentype');
+        font-weight: 700;
+        font-style: normal;
+    }
+
     /* --- TEMA BLOCKSTREAM EDITION --- */
     :root {
         --primary: #00FFA3;       /* Verde Jade Neon */
@@ -19,10 +43,17 @@
         --border: #2a2a2a;
     }
 
-    /* Fundo Geral */
+    /* Aplicação Global das Fontes */
     body, .login {
+        font-family: 'Inter', sans-serif !important;
         background-color: var(--bg-dark) !important;
         color: var(--text-main) !important;
+    }
+
+    /* Títulos Tech */
+    h1, h2, #branding h1, .login-header h1 {
+        font-family: 'Rigid Square', sans-serif !important;
+        letter-spacing: 1px;
     }
 
     /* Cabeçalho */
@@ -30,8 +61,13 @@
         background: var(--bg-card) !important;
         border-bottom: 1px solid var(--primary) !important;
     }
-    #header a { color: white !important; }
-    #branding h1 { font-weight: bold; letter-spacing: 1px; }
+    #header a {
+        color: white !important;
+    }
+    #branding h1 {
+        font-weight: bold;
+        letter-spacing: 1px;
+    }
 
     /* Módulos e Tabelas */
     .module {
@@ -44,8 +80,12 @@
     }
     
     /* Links */
-    a:link, a:visited { color: var(--primary) !important; }
-    a:hover { color: var(--secondary) !important; }
+    a:link, a:visited {
+        color: var(--primary) !important;
+    }
+    a:hover {
+        color: var(--secondary) !important;
+    }
 
     /* Botões */
     .button, input[type=submit], .submit-row input {
@@ -75,14 +115,22 @@
     }
 
     /* Tabela de Listagem */
-    #changelist table { border: 1px solid var(--border); }
+    #changelist table {
+        border: 1px solid var(--border);
+    }
     #changelist table thead th {
         background: #1a1a1a !important;
         color: var(--primary) !important;
     }
-    #changelist table tbody tr { background: var(--bg-dark) !important; }
-    #changelist table tbody tr:nth-child(odd) { background: #0a0a0a !important; }
-    #changelist table tbody tr:hover { background: #161616 !important; }
+    #changelist table tbody tr {
+        background: var(--bg-dark) !important;
+    }
+    #changelist table tbody tr:nth-child(odd) {
+        background: #0a0a0a !important;
+    }
+    #changelist table tbody tr:hover {
+        background: #161616 !important;
+    }
 
     /* Breadcrumbs (Barra de navegação) */
     div.breadcrumbs {
