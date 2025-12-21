@@ -1,5 +1,5 @@
 from django.db import models
-from core.models import Product
+from core.models import Produto
 
 class Order(models.Model):
     STATUS_CHOICES = [
@@ -35,7 +35,7 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.PROTECT) # Se deletar produto, mantém o registro da venda
+    product = models.ForeignKey(Produto, on_delete=models.PROTECT) # Se deletar produto, mantém o registro da venda
     quantity = models.PositiveIntegerField(default=1)
     price_at_purchase = models.DecimalField(max_digits=10, decimal_places=2) # Preço congelado no momento da compra
 
