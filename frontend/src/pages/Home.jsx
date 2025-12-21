@@ -9,7 +9,7 @@ const Home = () => {
   const [produtos, setProdutos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  
   useEffect(() => {
     api.get('/produtos/')
       .then(res => { setProdutos(res.data); setLoading(false); })
@@ -24,11 +24,11 @@ const Home = () => {
           SECURE YOUR <span className="text-bs-jade">ASSETS</span>
         </h2>
         <p className="text-gray-400 font-mono max-w-2xl mx-auto">
-          Hardware Wallets Open-Source (DIY). </br>
+          Hardware Wallets Open-Source (DIY). <br />
           Montagem especializada, firmware auditável e privacidade absoluta.
         </p>
       </div>
-
+      
       {loading && <div className="text-bs-jade text-center animate-pulse font-mono">INITIALIZING UPLINK...</div>}
       
       {error && (
@@ -36,7 +36,7 @@ const Home = () => {
           <AlertCircle size={20} /> {error}
         </div>
       )}
-
+      
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {produtos.map(produto => (
           <div key={produto.id} className="group bg-bs-card border border-bs-border hover:border-bs-jade transition-all p-6 flex flex-col">
