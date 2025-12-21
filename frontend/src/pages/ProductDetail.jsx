@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { ShieldCheck, Cpu, ArrowLeft, ShoppingCart, PenTool } from 'lucide-react';
+import { useCart } from '../contexts/CartContext';
+import { useNavigate } from 'react-router-dom';
 
 const api = axios.create({ baseURL: '/api' });
 
@@ -9,6 +11,8 @@ const ProductDetail = () => {
   const { id } = useParams();
   const [produto, setProduto] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { addToCart } = useCart();
+  const navigate = useNavigate();
 
   useEffect(() => {
     api.get(`/produtos/${id}/`)
@@ -56,7 +60,10 @@ const ProductDetail = () => {
 
           <button 
             className="w-full bg-bs-jade hover:bg-[#00ffa3]/90 text-black font-bold py-4 uppercase tracking-[0.2em] text-sm transition-transform active:scale-[0.98] flex items-center justify-center gap-3 mb-8"
-            onClick={() => alert("Carrinho em desenvolvimento...")}
+            onClick={() => {
+              addToCart(produto);
+              navigate('/carrinho');
+            }}
           >
             <ShoppingCart size={20} />
             Adicionar ao Carrinho

@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import ProductDetail from './pages/ProductDetail';
 import About from './pages/About';
+import Cart from './pages/Cart';
 
 // Placeholder simples apenas para o que ainda falta
 const Placeholder = ({ title }) => (
@@ -21,11 +22,11 @@ function App() {
       <main className="flex-grow">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/produto/:id" element={<ProductDetail />} /> {/* Rota Real */}
-          <Route path="/sobre" element={<About />} /> {/* Rota Real */}
+          <Route path="/produto/:id" element={<ProductDetail />} />
+          <Route path="/sobre" element={<About />} />
 
           <Route path="/rastreio" element={<Placeholder title="SISTEMA DE RASTREIO" />} />
-          <Route path="/carrinho" element={<Placeholder title="CARRINHO DE COMPRAS" />} />
+          <Route path="/carrinho" element={<Cart />} />
         </Routes>
       </main>
 

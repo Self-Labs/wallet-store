@@ -1,8 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingCart, Menu } from 'lucide-react';
+import { useCart } from '../contexts/CartContext';
 
 const Navbar = () => {
+  const { totalItems } = useCart();
   return (
     <nav className="border-b border-bs-border bg-bs-card/80 backdrop-blur-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -27,9 +29,11 @@ const Navbar = () => {
           <div className="flex items-center gap-4">
             <Link to="/carrinho" className="relative p-2 text-white hover:text-bs-jade transition-colors">
               <ShoppingCart size={24} />
-              <span className="absolute top-0 right-0 bg-bs-jade text-black text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                0
-              </span>
+              {totalItems > 0 && (
+                <span className="absolute top-0 right-0 bg-bs-jade text-black text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                  {totalItems}
+                </span>
+              )}
             </Link>
           </div>
         </div>

@@ -24,7 +24,8 @@ const Home = () => {
           SECURE YOUR <span className="text-bs-jade">ASSETS</span>
         </h2>
         <p className="text-gray-400 font-mono max-w-2xl mx-auto">
-          Hardware Wallets Open-Source (DIY). Montagem especializada, firmware auditável e privacidade absoluta.
+          Hardware Wallets Open-Source (DIY). </br>
+          Montagem especializada, firmware auditável e privacidade absoluta.
         </p>
       </div>
 
