@@ -80,9 +80,13 @@ const Cart = () => {
             <span className="text-bs-jade">R$ {cartTotal.toFixed(2)}</span>
           </div>
 
-          <button className="w-full bg-bs-jade hover:bg-[#00ffa3]/90 text-black font-bold py-4 uppercase tracking-[0.2em] text-sm transition-transform active:scale-[0.98] flex items-center justify-center gap-2">
+          {/* Link para Checkout */}
+          <Link 
+            to="/checkout" 
+            className="w-full bg-bs-jade hover:bg-[#00ffa3]/90 text-black font-bold py-4 uppercase tracking-[0.2em] text-sm transition-transform active:scale-[0.98] flex items-center justify-center gap-2"
+          >
             Checkout Seguro <ArrowRight size={16} />
-          </button>
+          </Link>
           
           <p className="text-xs text-gray-600 text-center mt-4 font-mono">
             Dados criptografados e destruídos após o envio.

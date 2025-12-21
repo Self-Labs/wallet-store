@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import ProductDetail from './pages/ProductDetail';
 import About from './pages/About';
 import Cart from './pages/Cart';
+import Checkout from './pages/Checkout';
 
 // Placeholder simples apenas para o que ainda falta
 const Placeholder = ({ title }) => (
@@ -24,9 +25,12 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/produto/:id" element={<ProductDetail />} />
           <Route path="/sobre" element={<About />} />
-
-          <Route path="/rastreio" element={<Placeholder title="SISTEMA DE RASTREIO" />} />
           <Route path="/carrinho" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
+          
+          <Route path="/rastreio" element={<Placeholder title="SISTEMA DE RASTREIO" />} />
+          <Route path="/conta" element={<Placeholder title="ÁREA DO CLIENTE" />} />
+          <Route path="/admin" element={<Placeholder title="PAINEL ADMINISTRATIVO" />} />
         </Routes>
       </main>
 
