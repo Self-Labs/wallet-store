@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useCart } from '../contexts/CartContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ShieldAlert, Lock, Truck, CreditCard } from 'lucide-react';
+import { ShieldAlert, Lock, Truck, CreditCard, Search } from 'lucide-react';
 
 const api = axios.create({ baseURL: '/api' });
 
@@ -10,25 +10,72 @@ const Checkout = () => {
   const { cartItems, cartTotal, clearCart } = useCart();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [loadingCep, setLoadingCep] = useState(false); // Estado para o loading do CEP
+  
+  // Estado granular para os campos do Melhor Envio
   const [formData, setFormData] = useState({
     full_name: '',
     email: '',
+    phone: '',
     cpf: '',
-    address: ''
+    cep: '',
+    street: '',
+    number: '',
+    complement: '',
+    district: '',
+    city: '',
+    state: ''
   });
 
-  // Se não tiver itens, chuta de volta pra home
   if (cartItems.length === 0) {
     setTimeout(() => navigate('/'), 3000);
     return <div className="text-center py-20 text-bs-jade font-mono">CARRINHO VAZIO. REDIRECIONANDO...</div>;
   }
 
+  // Função para buscar CEP
+  const handleCepBlur = async (e) => {
+    const cep = e.target.value.replace(/\D/g, '');
+    if (cep.length === 8) {
+      setLoadingCep(true);
+      try {
+        const { data } = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
+        if (!data.erro) {
+          setFormData(prev => ({
+            ...prev,
+            street: data.logradouro,
+            district: data.bairro,
+            city: data.localidade,
+            state: data.uf
+          }));
+          document.getElementById('numero-input').focus(); // Pula pro número
+        }
+      } catch (error) {
+        console.error("Erro CEP");
+      } finally {
+        setLoadingCep(false);
+      }
+    }
+  };
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
+    // Junta os campos numa string única para o Backend (que espera 'address' texto)
+    const formattedAddress = `Logradouro: ${formData.street}, ${formData.number} ${formData.complement}
+    Bairro: ${formData.district}
+    Cidade: ${formData.city}/${formData.state}
+    CEP: ${formData.cep} | Tel: ${formData.phone}`;
+
     const payload = {
-      ...formData,
+      full_name: formData.full_name,
+      email: formData.email,
+      cpf: formData.cpf,
+      address: formattedAddress, // Backend recebe o blocão de texto
       items: cartItems.map(item => ({
         product_id: item.id,
         quantity: item.quantity,
@@ -50,6 +97,10 @@ const Checkout = () => {
     }
   };
 
+  // Styles helpers para não poluir o JSX
+  const inputStyle = "w-full bg-black border border-bs-border text-white p-3 focus:border-bs-jade outline-none font-mono";
+  const labelStyle = "block text-bs-jade text-xs font-bold mb-2 uppercase";
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
       <h1 className="text-3xl font-tech text-white mb-8 flex items-center gap-3">
@@ -69,51 +120,153 @@ const Checkout = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
+              
+              {/* Dados Pessoais */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-bs-jade text-xs font-bold mb-2 uppercase">Nome Completo</label>
+                  <label className={labelStyle}>Nome Completo</label>
                   <input 
                     required 
+                    name="full_name" 
+                    onChange={handleChange} 
                     type="text" 
-                    className="w-full bg-black border border-bs-border text-white p-3 focus:border-bs-jade outline-none font-mono"
-                    placeholder="Satoshi Nakamoto"
-                    onChange={e => setFormData({...formData, full_name: e.target.value})}
+                    className={inputStyle} 
+                    placeholder="Satoshi Nakamoto" 
                   />
                 </div>
                 <div>
-                  <label className="block text-bs-jade text-xs font-bold mb-2 uppercase">CPF (Para Nota Fiscal)</label>
+                  <label className={labelStyle}>CPF (Exigência Envio)</label>
                   <input 
                     required 
+                    name="cpf" 
+                    onChange={handleChange} 
                     type="text" 
-                    className="w-full bg-black border border-bs-border text-white p-3 focus:border-bs-jade outline-none font-mono"
-                    placeholder="000.000.000-00"
-                    onChange={e => setFormData({...formData, cpf: e.target.value})}
+                    className={inputStyle} 
+                    placeholder="000.000.000-00" 
+                    maxLength="14" 
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-bs-jade text-xs font-bold mb-2 uppercase">E-mail (Para Rastreio)</label>
-                <input 
-                  required 
-                  type="email" 
-                  className="w-full bg-black border border-bs-border text-white p-3 focus:border-bs-jade outline-none font-mono"
-                  placeholder="email@seguro.com"
-                  onChange={e => setFormData({...formData, email: e.target.value})}
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className={labelStyle}>E-mail</label>
+                  <input 
+                    required 
+                    name="email" 
+                    onChange={handleChange} 
+                    type="email" 
+                    className={inputStyle} 
+                    placeholder="email@seguro.com" 
+                  />
+                </div>
+                <div>
+                  <label className={labelStyle}>Telefone (SMS Entrega)</label>
+                  <input 
+                    required 
+                    name="phone" 
+                    onChange={handleChange} 
+                    type="tel" 
+                    className={inputStyle} 
+                    placeholder="(11) 99999-9999" 
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-bs-jade text-xs font-bold mb-2 uppercase">Endereço de Entrega</label>
-                <textarea 
-                  required 
-                  rows="3"
-                  className="w-full bg-black border border-bs-border text-white p-3 focus:border-bs-jade outline-none font-mono"
-                  placeholder="Rua, Número, Bairro, Cidade, CEP..."
-                  onChange={e => setFormData({...formData, address: e.target.value})}
-                ></textarea>
+              {/* Endereço Completo */}
+              <div className="pt-4 border-t border-bs-border/30">
+                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
+                    <div>
+                      <label className={labelStyle}>CEP</label>
+                      <div className="relative">
+                        <input 
+                          required 
+                          name="cep" 
+                          onChange={handleChange} 
+                          onBlur={handleCepBlur} 
+                          type="text" 
+                          maxLength="9" 
+                          className={inputStyle} 
+                          placeholder="00000-000" 
+                        />
+                        {loadingCep && <span className="absolute right-3 top-3 animate-spin text-bs-jade">⌛</span>}
+                      </div>
+                    </div>
+                    <div className="md:col-span-2">
+                       <label className={labelStyle}>Rua / Logradouro</label>
+                       <input 
+                          required 
+                          name="street" 
+                          value={formData.street} 
+                          onChange={handleChange} 
+                          type="text" 
+                          className={inputStyle} 
+                        />
+                    </div>
+                 </div>
+
+                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
+                    <div>
+                       <label className={labelStyle}>Número</label>
+                       <input 
+                        required 
+                        id="numero-input" 
+                        name="number" 
+                        onChange={handleChange} 
+                        type="text" 
+                        className={inputStyle} 
+                      />
+                    </div>
+                    <div>
+                       <label className={labelStyle}>Complemento</label>
+                       <input 
+                        name="complement" 
+                        onChange={handleChange} 
+                        type="text" 
+                        className={inputStyle} 
+                      />
+                    </div>
+                    <div>
+                       <label className={labelStyle}>Bairro</label>
+                       <input 
+                        required 
+                        name="district" 
+                        value={formData.district} 
+                        onChange={handleChange} 
+                        type="text" 
+                        className={inputStyle} 
+                      />
+                    </div>
+                 </div>
+
+                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="md:col-span-2">
+                       <label className={labelStyle}>Cidade</label>
+                       <input 
+                        required 
+                        name="city" 
+                        value={formData.city} 
+                        onChange={handleChange} 
+                        type="text" 
+                        className={inputStyle} 
+                      />
+                    </div>
+                    <div>
+                       <label className={labelStyle}>UF</label>
+                       <input 
+                        required 
+                        name="state" 
+                        value={formData.state} 
+                        onChange={handleChange} 
+                        type="text" 
+                        maxLength="2" 
+                        className={inputStyle} 
+                      />
+                    </div>
+                 </div>
               </div>
 
+              {/* Rodapé do FORM */}
               <div className="pt-6 border-t border-bs-border">
                 <h3 className="text-white font-tech text-lg mb-4 flex items-center gap-2">
                   <CreditCard size={20} /> PAGAMENTO
