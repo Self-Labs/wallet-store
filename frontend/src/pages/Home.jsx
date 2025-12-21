@@ -24,7 +24,7 @@ const Home = () => {
           SECURE YOUR <span className="text-bs-jade">ASSETS</span>
         </h2>
         <p className="text-gray-400 font-mono max-w-2xl mx-auto">
-          Hardware Wallets oficiais. Importação direta. Privacidade absoluta.
+          Hardware Wallets Open-Source (DIY). Montagem especializada, firmware auditável e privacidade absoluta.
         </p>
       </div>
 
@@ -40,13 +40,12 @@ const Home = () => {
         {produtos.map(produto => (
           <div key={produto.id} className="group bg-bs-card border border-bs-border hover:border-bs-jade transition-all p-6 flex flex-col">
             <div className="h-48 bg-bs-dark/50 mb-6 flex items-center justify-center border border-bs-border/30">
-              {/* Futuramente aqui vai a imagem do produto */}
               <Package size={48} className="text-gray-700 group-hover:text-bs-jade transition-colors" />
             </div>
             
             <h3 className="text-2xl font-tech text-white mb-2">{produto.nome}</h3>
             <p className="text-gray-500 text-sm mb-6 flex-grow font-mono line-clamp-2">
-              {produto.descricao || "Descrição técnica indisponível."}
+              {produto.descricao || "Dispositivo DIY de alta performance."}
             </p>
             
             <div className="flex items-center justify-between mt-auto pt-6 border-t border-bs-border">

@@ -3,11 +3,13 @@ import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
+import ProductDetail from './pages/ProductDetail';
+import About from './pages/About';
 
-// Componentes Placeholder (Para não dar erro 404 agora)
+// Placeholder simples apenas para o que ainda falta
 const Placeholder = ({ title }) => (
-  <div className="flex items-center justify-center h-[60vh] text-bs-jade font-tech text-2xl">
-    // {title} // EM DESENVOLVIMENTO
+  <div className="flex items-center justify-center h-[60vh] text-bs-jade font-tech text-2xl border border-dashed border-bs-border m-8 bg-bs-card/20">
+    // {title} // EM BREVE
   </div>
 );
 
@@ -19,10 +21,11 @@ function App() {
       <main className="flex-grow">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/produto/:id" element={<Placeholder title="DETALHES DO PRODUTO" />} />
-          <Route path="/sobre" element={<Placeholder title="SOBRE NÓS" />} />
-          <Route path="/rastreio" element={<Placeholder title="RASTREIO" />} />
-          <Route path="/carrinho" element={<Placeholder title="CARRINHO" />} />
+          <Route path="/produto/:id" element={<ProductDetail />} /> {/* Rota Real */}
+          <Route path="/sobre" element={<About />} /> {/* Rota Real */}
+
+          <Route path="/rastreio" element={<Placeholder title="SISTEMA DE RASTREIO" />} />
+          <Route path="/carrinho" element={<Placeholder title="CARRINHO DE COMPRAS" />} />
         </Routes>
       </main>
 
