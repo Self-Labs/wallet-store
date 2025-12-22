@@ -19,6 +19,8 @@ services:
   api:
     container_name: store-api
     build: ./backend
+    labels:
+      - "com.centurylinklabs.watchtower.enable=false"
     command: sh -c "/entrypoint.sh && gunicorn setup.wsgi:application --bind 0.0.0.0:8000"
     environment:
       - SECRET_KEY=${SECRET_KEY}
@@ -41,6 +43,8 @@ services:
   web:
     container_name: store-web
     build: ./frontend
+    labels:
+      - "com.centurylinklabs.watchtower.enable=false"
     restart: unless-stopped
     depends_on:
       - api

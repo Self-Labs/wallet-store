@@ -26,7 +26,7 @@ const ProductDetail = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
       <Link to="/" className="inline-flex items-center text-gray-500 hover:text-white mb-8 transition-colors font-mono text-sm">
-        <ArrowLeft size={16} className="mr-2" /> VOLTAR AO CATALOGO
+        <ArrowLeft size={16} className="mr-2" /> VOLTAR AO CATÁLOGO
       </Link>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">

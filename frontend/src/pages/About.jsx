@@ -8,7 +8,7 @@ const About = () => {
         <h1 className="text-4xl md:text-6xl font-tech text-white mb-6">
           VERIFY. <span className="text-bs-jade">DON'T TRUST.</span>
         </h1>
-        <p className="text-gray-400 font-mono text-lg">
+        <p className="text-gray-400 font-mono max-w-2xl mx-auto">
           Democratizando a segurança digital através de hardware acessível e transparente.
         </p>
       </div>

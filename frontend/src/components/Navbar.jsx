@@ -61,7 +61,7 @@ const Navbar = () => {
               className="block px-4 py-3 text-gray-300 hover:text-black hover:bg-bs-jade transition-colors border-l-2 border-transparent hover:border-white flex justify-between items-center"
               onClick={() => setIsMenuOpen(false)}
             >
-              CATÁLOGO DE PRODUTOS
+              PRODUTOS
               <ChevronRight size={16} />
             </Link>
 
@@ -70,7 +70,7 @@ const Navbar = () => {
               className="block px-4 py-3 text-gray-300 hover:text-black hover:bg-bs-jade transition-colors border-l-2 border-transparent hover:border-white flex justify-between items-center"
               onClick={() => setIsMenuOpen(false)}
             >
-              SOBRE NÓS
+              SOBRE
               <ChevronRight size={16} />
             </Link>
 
@@ -79,7 +79,7 @@ const Navbar = () => {
               className="block px-4 py-3 text-gray-300 hover:text-black hover:bg-bs-jade transition-colors border-l-2 border-transparent hover:border-white flex justify-between items-center"
               onClick={() => setIsMenuOpen(false)}
             >
-              RASTREAR PEDIDO
+              RASTREIO
               <ChevronRight size={16} />
             </Link>
 
