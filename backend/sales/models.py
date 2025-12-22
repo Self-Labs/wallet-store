@@ -10,13 +10,14 @@ class Order(models.Model):
         ('CANCELED', 'Cancelado'),
     ]
 
-    # --- DADOS SENSÍVEIS (Alvo do Script de Destruição) ---
+    # --- DADOS SENSÍVEIS ---
     full_name = models.CharField("Nome Completo", max_length=255)
     email = models.EmailField("E-mail")
     cpf = models.CharField("CPF", max_length=14)
+    phone = models.CharField("Telefone", max_length=20, default="")
     address = models.TextField("Endereço de Entrega")
     
-    # --- METADADOS (Permanentes) ---
+    # --- METADADOS ---
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

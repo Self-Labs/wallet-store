@@ -17,13 +17,13 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12">
+    <div className="max-w-7xl mx-auto px-4 py-16">
       {/* Banner Hero */}
-      <div className="mb-16 text-center">
-        <h1 className="text-5xl md:text-7xl font-tech text-white mb-4 tracking-tighter">
+      <div className="text-center mb-16">
+        <h1 className="text-4xl md:text-6xl font-tech text-white mb-6">
           SECURE YOUR <span className="text-bs-jade">ASSETS</span>
         </h1>
-        <p className="text-gray-400 font-mono max-w-2xl mx-auto">
+        <p className="text-gray-400 font-mono">
           Hardware Wallets Open-Source (DIY). <br />
           Montagem especializada, firmware auditável e privacidade absoluta.
         </p>

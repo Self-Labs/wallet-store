@@ -16,7 +16,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ['id', 'full_name', 'email', 'cpf', 'address', 'status', 'created_at', 'items']
+        fields = ['id', 'full_name', 'email', 'cpf', 'phone', 'address', 'status', 'created_at', 'items']
         read_only_fields = ['status', 'created_at']
 
     def create(self, validated_data):
@@ -27,11 +27,11 @@ class OrderSerializer(serializers.ModelSerializer):
             OrderItem.objects.create(order=order, **item_data)
             
             # Baixa de Estoque
-            product = item_data['product']
+            product_instance = item_data['product']
             # Validação simples para evitar erro se estoque for None
-            if product.estoque_atual is None:
-                product.estoque_atual = 0 # Segurança
-            product.estoque_atual -= item_data['quantity']
-            product.save()
+            if product_instance.estoque_atual is None:
+                product_instance.estoque_atual = 0 # Segurança
+            product_instance.estoque_atual -= item_data['quantity']
+            product_instance.save()
             
         return order

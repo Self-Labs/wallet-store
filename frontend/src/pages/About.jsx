@@ -3,12 +3,13 @@ import { Shield, EyeOff, Wrench } from 'lucide-react';
 
 const About = () => {
   return (
-    <div className="max-w-4xl mx-auto px-4 py-16">
+    <div className="max-w-7xl mx-auto px-4 py-16">
+      {/* Banner Hero */}
       <div className="text-center mb-16">
         <h1 className="text-4xl md:text-6xl font-tech text-white mb-6">
           VERIFY. <span className="text-bs-jade">DON'T TRUST.</span>
         </h1>
-        <p className="text-gray-400 font-mono max-w-2xl mx-auto">
+        <p className="text-gray-400 font-mono">
           Democratizando a segurança digital através de hardware acessível e transparente.
         </p>
       </div>
