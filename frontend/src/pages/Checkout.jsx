@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useCart } from '../contexts/CartContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ShieldAlert, Lock, Truck, CreditCard, Search } from 'lucide-react';
+import { ShieldAlert, Lock, Truck, CreditCard, Search, Loader2 } from 'lucide-react';
 
 const api = axios.create({ baseURL: '/api' });
 
@@ -272,7 +272,11 @@ const Checkout = () => {
                           className={inputStyle} 
                           placeholder="00000-000" 
                         />
-                        {loadingCep && <span className="absolute right-3 top-3 animate-spin text-bs-jade">⌛</span>}
+                        {loadingCep && (
+                          <div className="absolute right-3 top-3">
+                            <Loader2 size={18} className="animate-spin text-bs-jade" />
+                          </div>
+                        )}
                       </div>
                     </div>
                     <div className="md:col-span-2">

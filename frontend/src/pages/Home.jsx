@@ -25,7 +25,7 @@ const Home = () => {
         </h1>
         <p className="text-gray-400 font-mono">
           Hardware Wallets Open-Source (DIY). <br />
-          Montagem especializada, firmware auditável e privacidade absoluta.
+          Firmware auditável e privacidade absoluta.
         </p>
       </div>
       
