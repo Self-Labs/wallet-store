@@ -22,42 +22,39 @@ const Navbar = () => {
 
           {/* 2. Links Desktop (Hidden no Mobile) */}
           <div className="hidden md:flex items-center gap-8 text-sm font-mono text-gray-400">
-            <Link to="/" className="hover:text-bs-jade transition-colors">PRODUTOS</Link>
+            <Link to="/produtos" className="hover:text-bs-jade transition-colors">PRODUTOS</Link>
             <Link to="/sobre" className="hover:text-bs-jade transition-colors">SOBRE</Link>
             <Link to="/rastreio" className="hover:text-bs-jade transition-colors">RASTREIO</Link>
+            <Link to="/contato" className="hover:text-bs-jade transition-colors">CONTATO</Link>
           </div>
 
-          {/* 3. Ações (Carrinho + Menu Mobile) */}
-          <div className="flex items-center gap-4">
-            
-            {/* Carrinho */}
-            <Link to="/carrinho" className="relative p-2 text-white hover:text-bs-jade transition-colors" onClick={() => setIsMenuOpen(false)}>
-              <ShoppingCart size={24} />
+          {/* 3. Carrinho e Menu Mobile Icon */}
+          <div className="flex items-center gap-6">
+            <Link to="/carrinho" className="relative group" onClick={() => setIsMenuOpen(false)}>
+              <ShoppingCart className="text-gray-400 group-hover:text-bs-jade transition-colors" />
               {totalItems > 0 && (
-                <span className="absolute top-0 right-0 bg-bs-jade text-black text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                <span className="absolute -top-2 -right-2 bg-bs-jade text-black text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full">
                   {totalItems}
                 </span>
               )}
             </Link>
 
-            {/* Botão Menu Hambúrguer (Só aparece no Mobile) */}
+            {/* Botão Hamburger (Só aparece no Mobile) */}
             <button 
-              className="md:hidden text-white hover:text-bs-jade transition-colors p-1"
+              className="md:hidden text-gray-400 hover:text-white"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
-              {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+              {isMenuOpen ? <X /> : <Menu />}
             </button>
           </div>
         </div>
       </div>
 
-      {/* 4. Menu Mobile Dropdown (Lógica de exibição) */}
+      {/* 4. Menu Mobile (Dropdown) */}
       {isMenuOpen && (
-        <div className="md:hidden bg-black border-b border-bs-border absolute w-full left-0 animate-in slide-in-from-top-5 duration-200">
-          <div className="px-4 py-4 space-y-2 font-mono">
-            
-            <Link 
-              to="/" 
+        <div className="md:hidden bg-bs-card border-b border-bs-border animate-fade-in font-mono text-sm">
+           <Link 
+              to="/produtos"
               className="block px-4 py-3 text-gray-300 hover:text-black hover:bg-bs-jade transition-colors border-l-2 border-transparent hover:border-white flex justify-between items-center"
               onClick={() => setIsMenuOpen(false)}
             >
@@ -82,8 +79,16 @@ const Navbar = () => {
               RASTREIO
               <ChevronRight size={16} />
             </Link>
+            
+            <Link 
+              to="/contato" 
+              className="block px-4 py-3 text-gray-300 hover:text-black hover:bg-bs-jade transition-colors border-l-2 border-transparent hover:border-white flex justify-between items-center"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              CONTATO
+              <ChevronRight size={16} />
+            </Link>
 
-            {/* Link extra útil no mobile */}
             <Link 
               to="/checkout" 
               className="block px-4 py-3 text-bs-jade border border-bs-jade/30 text-center mt-4 font-bold tracking-widest uppercase hover:bg-bs-jade hover:text-black transition-colors"
@@ -91,8 +96,6 @@ const Navbar = () => {
             >
               IR PARA CHECKOUT
             </Link>
-            
-          </div>
         </div>
       )}
     </nav>

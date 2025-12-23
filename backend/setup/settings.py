@@ -102,3 +102,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # --- CORS (REACT) ---
 CORS_ALLOW_ALL_ORIGINS = True
+
+# --- E-MAIL SETTINGS ---
+# Em produção, usaremos SMTP real.
+# Para testes locais, os e-mails aparecerão no terminal do container se não houver variáveis.
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com') # Exemplo
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+
+# Remetentes Padrão
+EMAIL_CONTATO = 'contato@jadewallet.com.br'
+EMAIL_RASTREIO = 'rastreio@jadewallet.com.br'

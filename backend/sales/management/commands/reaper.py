@@ -57,6 +57,11 @@ class Command(BaseCommand):
         """
         try:
             self.stdout.write(self.style.SUCCESS(f" > ALVO CONFIRMADO: Pedido #{order.id} Entregue."))
+            
+            # --- Envia E-mail ANTES de destruir ---
+            self.stdout.write(" > Enviando e-mail de notificação...")
+            EmailService.send_data_destruction(order, order.email)
+
             self.stdout.write(" > Executando destruição de dados...")
 
             # Atualiza Status
