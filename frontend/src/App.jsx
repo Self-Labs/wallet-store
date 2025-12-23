@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -10,6 +10,7 @@ import Tracking from './pages/Tracking';
 import Contact from './pages/Contact';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
+import { CartProvider } from './contexts/CartContext';
 
 // Placeholder simples apenas para o que ainda falta
 const Placeholder = ({ title }) => (
@@ -17,6 +18,7 @@ const Placeholder = ({ title }) => (
     // {title} // EM BREVE
   </div>
 );
+
 function App() {
   return (
     <CartProvider>
