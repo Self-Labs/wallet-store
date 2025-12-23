@@ -1,49 +1,64 @@
 import React from 'react';
+import { Mail, Package, Send } from 'lucide-react';
 
 const Contact = () => {
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800 dark:text-white" style={{ fontFamily: 'Rigid Square' }}>
-        Canal de Contato
+    <div className="max-w-7xl mx-auto px-4 py-12 animate-fade-in">
+       {/* HEADER PADRÃO */}
+      <h1 className="text-3xl font-tech text-white mb-8 flex items-center gap-3">
+            <span className="text-bs-jade">///</span> CONTACT
       </h1>
       
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
-        <p className="text-gray-600 dark:text-gray-300 mb-6">
-          Para questões sobre soberania, suporte técnico da Jade Wallet ou dúvidas sobre envios.
-        </p>
-
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        {/* Canais */}
         <div className="space-y-4">
-          <div className="flex items-center p-4 bg-gray-50 dark:bg-gray-900 rounded">
-            <span className="text-2xl mr-4">📧</span>
-            <div>
-              <h3 className="font-bold text-gray-800 dark:text-white">E-mail Geral</h3>
-              <p className="text-indigo-600 dark:text-indigo-400">contato@jadewallet.com.br</p>
+            <div className="bg-bs-card border border-bs-border p-6 hover:border-bs-jade/30 transition-colors group cursor-default">
+                <div className="flex items-center gap-4">
+                    <div className="p-3 bg-black border border-bs-border text-bs-jade">
+                        <Mail size={20} />
+                    </div>
+                    <div>
+                        <h3 className="text-white font-tech text-lg uppercase">General</h3>
+                        <p className="text-gray-500 font-mono text-sm">contato@jadewallet.com.br</p>
+                    </div>
+                </div>
             </div>
-          </div>
 
-          <div className="flex items-center p-4 bg-gray-50 dark:bg-gray-900 rounded">
-            <span className="text-2xl mr-4">📦</span>
-            <div>
-              <h3 className="font-bold text-gray-800 dark:text-white">Dúvidas de Envio</h3>
-              <p className="text-indigo-600 dark:text-indigo-400">rastreio@jadewallet.com.br</p>
+            <div className="bg-bs-card border border-bs-border p-6 hover:border-bs-jade/30 transition-colors group cursor-default">
+                <div className="flex items-center gap-4">
+                    <div className="p-3 bg-black border border-bs-border text-bs-blue">
+                        <Package size={20} />
+                    </div>
+                    <div>
+                        <h3 className="text-white font-tech text-lg uppercase">Logistics</h3>
+                        <p className="text-gray-500 font-mono text-sm">rastreio@jadewallet.com.br</p>
+                    </div>
+                </div>
             </div>
-          </div>
+            
+            <div className="p-6 border border-dashed border-bs-border text-gray-600 font-mono text-xs uppercase leading-relaxed">
+                Use PGP encryption if necessary. <br/>
+                We respect your privacy and data sovereignty.
+            </div>
         </div>
 
-        {/* Formulário Simples (Visual) */}
-        <form className="mt-8 space-y-4">
-            <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Seu E-mail</label>
-                <input type="email" className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2" placeholder="email@seguro.com" />
-            </div>
-            <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Mensagem</label>
-                <textarea rows="4" className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2"></textarea>
-            </div>
-            <button type="button" className="w-full bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 transition">
-                Enviar Mensagem
-            </button>
-        </form>
+        {/* Formulário */}
+        <div className="bg-bs-card border border-bs-border p-6">
+            <form className="space-y-4">
+                <div>
+                    <label className="block text-xs font-mono text-gray-500 mb-2 uppercase tracking-widest">Identify (Email)</label>
+                    <input type="email" className="w-full bg-black border border-bs-border text-white p-3 focus:border-bs-jade outline-none font-mono text-sm transition-colors" placeholder="user@domain.com" />
+                </div>
+                <div>
+                    <label className="block text-xs font-mono text-gray-500 mb-2 uppercase tracking-widest">Payload (Message)</label>
+                    <textarea rows="5" className="w-full bg-black border border-bs-border text-white p-3 focus:border-bs-jade outline-none font-mono text-sm transition-colors"></textarea>
+                </div>
+                <button type="button" className="w-full bg-white hover:bg-bs-jade text-black font-bold font-mono py-3 uppercase tracking-widest flex items-center justify-center gap-2 transition-all mt-4">
+                    Transmit <Send size={16} />
+                </button>
+            </form>
+        </div>
       </div>
     </div>
   );

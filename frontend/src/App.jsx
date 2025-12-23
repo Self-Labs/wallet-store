@@ -13,7 +13,7 @@ import Checkout from './pages/Checkout';
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-inter flex flex-col">
+    <div className="min-h-screen bg-bs-black text-white font-sans flex flex-col selection:bg-bs-jade selection:text-black">
       <Navbar />
       <main className="container mx-auto px-4 py-8 flex-grow">
         <Routes>

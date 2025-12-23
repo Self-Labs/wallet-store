@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Search, CheckCircle, XCircle, ArrowRight } from 'lucide-react';
 
 const Tracking = () => {
   const [code, setCode] = useState('');
@@ -13,84 +14,100 @@ const Tracking = () => {
     setResult(null);
 
     try {
-      // Conecta na nossa API pública
-      // Ajuste a URL se estiver em produção, aqui assume proxy ou localhost
-      const response = await fetch(`http://192.168.68.9:8002/api/sales/public/rastreio/?code=${code}`);
+      const response = await fetch(`/api/sales/public/rastreio/?code=${code}`);
       const data = await response.json();
 
       if (response.ok) {
         setResult(data);
       } else {
-        setError(data.error || 'Erro ao buscar rastreio');
+        setError(data.error || 'ID not found in the mempool.');
       }
     } catch (err) {
-      setError('Falha na conexão com o servidor de rastreio.');
+      setError('Connection failed.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-xl">
-      <h1 className="text-3xl font-bold mb-6 text-center" style={{ fontFamily: 'Rigid Square' }}>
-        Rastreio Soberano
+    <div className="max-w-7xl mx-auto px-4 py-12">
+       {/* HEADER PADRÃO */}
+      <h1 className="text-3xl font-tech text-white mb-8 flex items-center gap-3">
+            <span className="text-bs-jade">///</span> TRACKING
       </h1>
 
-      <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
-        <form onSubmit={handleTrack} className="mb-8">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Código de Rastreio
-          </label>
-          <div className="flex gap-2">
-            <input 
-              type="text" 
-              value={code}
-              onChange={(e) => setCode(e.target.value.toUpperCase())}
-              placeholder="OJ123456789BR"
-              className="flex-1 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 p-3 uppercase tracking-wider font-mono"
-            />
-            <button 
-              type="submit" 
-              disabled={loading}
-              className="bg-indigo-600 text-white px-6 py-3 rounded-md hover:bg-indigo-700 disabled:opacity-50"
-            >
-              {loading ? '...' : 'Buscar'}
-            </button>
-          </div>
-        </form>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        
+        {/* Coluna de Busca */}
+        <div className="lg:col-span-2">
+            <div className="bg-bs-card border border-bs-border p-6">
+                <form onSubmit={handleTrack} className="flex flex-col gap-4">
+                    <label className="text-gray-500 font-mono text-xs uppercase tracking-widest">
+                        Shipment UUID / Tracking Code
+                    </label>
+                    <div className="flex gap-2">
+                        <div className="flex-grow relative">
+                            <input 
+                                type="text" 
+                                value={code}
+                                onChange={(e) => setCode(e.target.value.toUpperCase())}
+                                placeholder="OJ123456789BR"
+                                className="w-full bg-black border border-bs-border text-white p-4 font-mono uppercase focus:border-bs-jade outline-none transition-colors"
+                            />
+                        </div>
+                        <button 
+                            type="submit" 
+                            disabled={loading}
+                            className="bg-bs-jade text-black font-bold px-8 uppercase tracking-widest hover:bg-[#00ffa3]/90 disabled:opacity-50 transition-colors"
+                        >
+                            {loading ? '...' : <ArrowRight />}
+                        </button>
+                    </div>
+                </form>
 
-        {error && (
-          <div className="p-4 bg-red-100 text-red-700 rounded-md mb-4 border border-red-200">
-            {error}
-          </div>
-        )}
-
-        {result && (
-          <div className="border-t border-gray-200 dark:border-gray-700 pt-6 animate-fade-in">
-            <div className="text-center mb-6">
-              <span className={`inline-block px-4 py-1 rounded-full text-sm font-bold 
-                ${result.status === 'DELIVERED' ? 'bg-green-100 text-green-800' : 
-                  result.status === 'SHIPPED' ? 'bg-blue-100 text-blue-800' : 
-                  'bg-yellow-100 text-yellow-800'}`}>
-                {result.status}
-              </span>
-              <p className="mt-2 text-xl font-mono">{result.tracking_code}</p>
+                {error && (
+                    <div className="mt-6 p-4 border border-red-900/50 bg-red-900/10 text-red-500 font-mono text-sm flex items-center gap-3">
+                        <XCircle size={16} /> {error}
+                    </div>
+                )}
             </div>
+        </div>
 
-            <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
-              <h3 className="font-bold text-gray-700 dark:text-gray-300 mb-2">Status Atual:</h3>
-              <p className="text-lg text-gray-800 dark:text-white">
-                {result.message}
-              </p>
-            </div>
+        {/* Coluna de Resultado */}
+        <div className="lg:col-span-1">
+            {result ? (
+                <div className="bg-bs-card border border-bs-jade p-6 animate-fade-in relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-bs-jade"></div>
+                    
+                    <h2 className="text-white font-tech text-2xl mb-1">{result.tracking_code}</h2>
+                    <p className={`font-mono text-xs font-bold uppercase mb-6 
+                        ${result.status === 'DELIVERED' ? 'text-bs-jade' : 'text-bs-blue'}`}>
+                        STATUS: {result.status}
+                    </p>
 
-            {result.status === 'DELIVERED' && (
-              <div className="mt-4 p-3 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 rounded text-sm text-indigo-700 dark:text-indigo-300">
-                🔒 Nota de Privacidade: Os dados pessoais associados a este envio já foram eliminados dos nossos servidores.
-              </div>
+                    <div className="space-y-4">
+                        <div className="flex gap-3">
+                            <CheckCircle className="text-gray-600 mt-1" size={16} />
+                            <div>
+                                <p className="text-gray-300 font-mono text-sm uppercase leading-relaxed">
+                                    {result.message}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {result.status === 'DELIVERED' && (
+                        <div className="mt-8 pt-4 border-t border-bs-border text-[10px] font-mono text-gray-600 uppercase text-center">
+                            /// DATA PURGED FROM SERVERS
+                        </div>
+                    )}
+                </div>
+            ) : (
+                <div className="h-full border border-dashed border-bs-border flex items-center justify-center text-gray-700 font-mono text-xs uppercase p-8 text-center">
+                    Awaiting Input Signal...
+                </div>
             )}
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );
