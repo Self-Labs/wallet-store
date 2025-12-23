@@ -58,7 +58,7 @@ const Tracking = () => {
                         <button 
                             type="submit" 
                             disabled={loading}
-                            className="bg-bs-jade text-black font-bold px-8 uppercase tracking-widest hover:bg-[#00ffa3]/90 disabled:opacity-50 transition-colors"
+                            className="bg-bs-jade text-black font-bold px-8 uppercase tracking-widest hover:bg-[#00ffa3]/90 disabled:opacity-50 transition-colors flex items-center gap-2"
                         >
                             {loading ? '...' : <ArrowRight />}
                         </button>

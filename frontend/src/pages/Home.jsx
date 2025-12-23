@@ -35,7 +35,7 @@ const Home = () => {
         </p>
 
         <div className="mt-8 flex justify-center gap-4">
-            <Link to="/produtos" className="bg-bs-jade hover:bg-[#00ffa3]/90 text-black font-bold py-3 px-8 rounded-sm transition-transform active:scale-95 font-mono">
+            <Link to="/produtos" className="bg-bs-jade hover:bg-[#00ffa3]/90 text-black font-bold py-3 px-8 uppercase tracking-widest transition-transform active:scale-95 font-mono">
                 VER PRODUTOS
             </Link>
         </div>
@@ -49,7 +49,7 @@ const Home = () => {
         </div>
       )}
       
-      {/* DESTAQUES (Mostra apenas os 3 primeiros ou aleatórios na Home) */}
+      {/* DESTAQUES */}
       {!loading && !error && (
         <>
             <div className="flex items-center justify-between mb-8 border-b border-bs-border pb-4">
@@ -61,34 +61,37 @@ const Home = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {produtos.slice(0, 3).map(produto => (
-                <div key={produto.id} className="group bg-bs-card border border-bs-border hover:border-bs-jade transition-all duration-300 flex flex-col">
-                    <div className="h-48 bg-bs-dark/50 flex items-center justify-center border-b border-bs-border/30 relative overflow-hidden">
-                        {produto.imagem ? (
-                             <img src={produto.imagem} alt={produto.nome} className="h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
-                        ) : (
-                             <Package size={48} className="text-gray-700 group-hover:text-bs-jade transition-colors" />
-                        )}
-                        {produto.estoque_atual <= 0 && (
-                            <div className="absolute inset-0 bg-black/80 flex items-center justify-center font-tech text-red-500 text-xl tracking-widest">ESGOTADO</div>
-                        )}
-                    </div>
-                    
-                    <div className="p-6 flex flex-col flex-grow">
-                        <Link to={`/produto/${produto.id}`}>
-                            <h3 className="text-xl font-bold text-white mb-2 font-mono group-hover:text-bs-jade transition-colors">{produto.nome}</h3>
-                        </Link>
-                        <p className="text-gray-500 text-sm mb-6 flex-grow font-mono line-clamp-2">
-                        {produto.descricao || "Dispositivo DIY de alta performance."}
-                        </p>
+                <div key={produto.id} className="group bg-bs-card border border-bs-border hover:border-bs-jade transition-all duration-300 flex flex-col h-full relative">
+                    {/* ÁREA DE CLIQUE (Vai para Detalhes) */}
+                    <Link to={`/produto/${produto.id}`} className="flex-grow flex flex-col">
+                        <div className="h-48 bg-bs-dark/50 flex items-center justify-center border-b border-bs-border/30 relative overflow-hidden">
+                            {produto.imagem ? (
+                                <img src={produto.imagem} alt={produto.nome} className="h-full w-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                            ) : (
+                                <Package size={48} className="text-gray-700 group-hover:text-bs-jade transition-colors" />
+                            )}
+                            {produto.estoque_atual <= 0 && (
+                                <div className="absolute inset-0 bg-black/80 flex items-center justify-center font-tech text-red-500 text-xl tracking-widest">ESGOTADO</div>
+                            )}
+                        </div>
                         
-                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-bs-border/30">
+                        <div className="p-6 pb-2">
+                            <h3 className="text-xl font-bold text-white mb-2 font-mono group-hover:text-bs-jade transition-colors uppercase">{produto.nome}</h3>
+                            <p className="text-gray-500 text-sm mb-4 font-mono line-clamp-2">
+                                {produto.descricao || "Dispositivo DIY de alta performance."}
+                            </p>
+                        </div>
+                    </Link>
+                    {/* ÁREA DE AÇÃO (Carrinho) */}
+                    <div className="px-6 pb-6 mt-auto">
+                        <div className="flex items-center justify-between pt-4 border-t border-bs-border/30">
                             <span className="text-bs-jade font-bold text-xl font-mono">
                                 R$ {parseFloat(produto.preco_venda).toFixed(2)}
                             </span>
                             <button 
                                 onClick={() => addToCart(produto)}
                                 disabled={produto.estoque_atual <= 0}
-                                className="bg-white hover:bg-bs-jade text-black p-2 rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="bg-white hover:bg-bs-jade text-black p-2 rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-transparent hover:border-bs-jade"
                             >
                                 <ShoppingCart size={20} />
                             </button>

@@ -48,14 +48,14 @@ const Contact = () => {
             <form className="space-y-4">
                 <div>
                     <label className="block text-xs font-mono text-gray-500 mb-2 uppercase tracking-widest">Identify (Email)</label>
-                    <input type="email" className="w-full bg-black border border-bs-border text-white p-3 focus:border-bs-jade outline-none font-mono text-sm transition-colors" placeholder="user@domain.com" />
+                    <input type="email" className="w-full bg-black border border-bs-border text-white p-3 focus:border-bs-jade outline-none font-mono text-sm transition-colors" placeholder="secure@email.com" />
                 </div>
                 <div>
                     <label className="block text-xs font-mono text-gray-500 mb-2 uppercase tracking-widest">Payload (Message)</label>
                     <textarea rows="5" className="w-full bg-black border border-bs-border text-white p-3 focus:border-bs-jade outline-none font-mono text-sm transition-colors"></textarea>
                 </div>
-                <button type="button" className="w-full bg-white hover:bg-bs-jade text-black font-bold font-mono py-3 uppercase tracking-widest flex items-center justify-center gap-2 transition-all mt-4">
-                    Transmit <Send size={16} />
+                <button type="button" className="w-full bg-bs-jade hover:bg-[#00ffa3]/90 text-black font-bold py-3 px-8 uppercase tracking-widest flex items-center justify-center gap-2 transition-transform active:scale-95 font-mono">
+                    TRANSMIT <Send size={16} />
                 </button>
             </form>
         </div>
