@@ -3,10 +3,17 @@ import React, { createContext, useState, useEffect, useContext } from 'react';
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-  // Carrega do LocalStorage ou inicia vazio
+  // 1. Inicialização BLINDADA (Try/Catch)
+  // Se o JSON estiver quebrado, não derruba o site
   const [cartItems, setCartItems] = useState(() => {
-    const savedCart = localStorage.getItem('walletStore_cart');
-    return savedCart ? JSON.parse(savedCart) : [];
+    try {
+      const savedCart = localStorage.getItem('walletStore_cart');
+      return savedCart ? JSON.parse(savedCart) : [];
+    } catch (error) {
+      console.error("Carrinho corrompido detectado. Resetando...", error);
+      localStorage.removeItem('walletStore_cart'); // Limpa o lixo
+      return [];
+    }
   });
 
   // Salva no LocalStorage sempre que o carrinho mudar
@@ -48,7 +55,7 @@ export const CartProvider = ({ children }) => {
   // Limpar Tudo
   const clearCart = () => setCartItems([]);
 
-  // Cálculos Derivados
+  // Cálculos Derivados (Total de Itens e Valor Total)
   const totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
   const cartTotal = cartItems.reduce((acc, item) => acc + (parseFloat(item.preco_venda) * item.quantity), 0);
 
