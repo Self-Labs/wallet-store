@@ -398,7 +398,7 @@ const Checkout = () => {
           </div>
           
           <div className="mt-4 flex items-center justify-center gap-2 text-gray-600 text-xs font-mono">
-            <Truck size={14} /> Envios via Melhor Envio
+            <Truck size={14} /> Envios via Carrier
           </div>
         </div>
 

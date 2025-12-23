@@ -11,7 +11,7 @@ const Cart = () => {
       <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4">
         <Package size={64} className="text-gray-700 mb-4" />
         <h2 className="text-2xl font-tech text-white mb-2">CARRINHO VAZIO</h2>
-        <p className="text-gray-500 font-mono mb-8">Seu kit de soberania ainda não foi montado.</p>
+        <p className="text-gray-500 font-tech mb-8">Seu kit de soberania ainda não foi montado.</p>
         <Link to="/" className="bg-bs-jade text-black font-bold px-8 py-3 uppercase tracking-widest hover:bg-[#00ffa3]/90 transition-colors">
           Explorar Hardware
         </Link>
@@ -36,8 +36,8 @@ const Cart = () => {
               
               <div className="flex-grow">
                 <h3 className="text-white font-tech text-lg">{item.nome}</h3>
-                <p className="text-gray-500 text-xs font-mono">SKU: DIY-{item.id}</p>
-                <div className="text-bs-jade font-mono mt-1">R$ {item.preco_venda}</div>
+                <p className="text-gray-500 text-xs font-tech">SKU: DIY-{item.id}</p>
+                <div className="text-bs-jade font-tech mt-1">R$ {item.preco_venda}</div>
               </div>
 
               {/* Controles de Quantidade */}
@@ -45,7 +45,7 @@ const Cart = () => {
                 <button onClick={() => updateQuantity(item.id, -1)} className="text-gray-400 hover:text-white p-1">
                   <Minus size={14} />
                 </button>
-                <span className="text-white font-mono w-4 text-center">{item.quantity}</span>
+                <span className="text-white font-tech w-4 text-center">{item.quantity}</span>
                 <button onClick={() => updateQuantity(item.id, 1)} className="text-gray-400 hover:text-white p-1">
                   <Plus size={14} />
                 </button>
@@ -66,16 +66,16 @@ const Cart = () => {
         <div className="bg-bs-card border border-bs-border p-6 h-fit sticky top-24">
           <h3 className="text-white font-tech text-xl mb-6 border-b border-bs-border pb-4">RESUMO</h3>
           
-          <div className="flex justify-between text-gray-400 font-mono mb-2">
+          <div className="flex justify-between text-gray-400 font-tech mb-2">
             <span>Subtotal</span>
             <span>R$ {cartTotal.toFixed(2)}</span>
           </div>
-          <div className="flex justify-between text-gray-400 font-mono mb-6">
+          <div className="flex justify-between text-gray-400 font-tech mb-6">
             <span>Frete</span>
             <span className="text-xs self-center">CALCULADO NO CHECKOUT</span>
           </div>
 
-          <div className="flex justify-between text-white font-bold font-mono text-xl mb-8 pt-4 border-t border-bs-border">
+          <div className="flex justify-between text-white font-bold font-tech text-xl mb-8 pt-4 border-t border-bs-border">
             <span>TOTAL</span>
             <span className="text-bs-jade">R$ {cartTotal.toFixed(2)}</span>
           </div>
@@ -88,7 +88,7 @@ const Cart = () => {
             Checkout Seguro <ArrowRight size={16} />
           </Link>
           
-          <p className="text-xs text-gray-600 text-center mt-4 font-mono">
+          <p className="text-xs text-gray-600 text-center mt-4 font-tech">
             Dados criptografados e destruídos após o envio.
           </p>
         </div>

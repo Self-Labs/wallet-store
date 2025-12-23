@@ -12,7 +12,7 @@ const Footer = () => {
             <ShieldAlert size={20} />
             <span className="uppercase tracking-widest">Protocolo de Privacidade</span>
           </div>
-          <p className="text-gray-500 text-sm font-mono">
+          <p className="text-gray-500 text-sm font-tech">
             Nós levamos sua segurança a sério. Todos os dados pessoais de entrega são 
             <span className="text-white font-bold"> automaticamente destruídos </span> 
             do nosso banco de dados após a confirmação da entrega.

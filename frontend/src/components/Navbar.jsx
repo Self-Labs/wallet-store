@@ -21,7 +21,7 @@ const Navbar = () => {
           </Link>
 
           {/* 2. Links Desktop (Hidden no Mobile) */}
-          <div className="hidden md:flex items-center gap-8 text-sm font-mono text-gray-400">
+          <div className="hidden md:flex items-center gap-8 text-sm font-tech text-gray-400">
             <Link to="/produtos" className="hover:text-bs-jade transition-colors">PRODUTOS</Link>
             <Link to="/sobre" className="hover:text-bs-jade transition-colors">SOBRE</Link>
             <Link to="/rastreio" className="hover:text-bs-jade transition-colors">RASTREIO</Link>
@@ -52,7 +52,7 @@ const Navbar = () => {
 
       {/* 4. Menu Mobile (Dropdown) */}
       {isMenuOpen && (
-        <div className="md:hidden bg-bs-card border-b border-bs-border animate-fade-in font-mono text-sm">
+        <div className="md:hidden bg-bs-card border-b border-bs-border animate-fade-in font-tech text-sm">
            <Link 
               to="/produtos"
               className="block px-4 py-3 text-gray-300 hover:text-black hover:bg-bs-jade transition-colors border-l-2 border-transparent hover:border-white flex justify-between items-center"

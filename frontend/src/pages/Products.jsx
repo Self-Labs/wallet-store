@@ -29,13 +29,13 @@ const Products = () => {
             <input 
                 type="text" 
                 placeholder="SEARCH..." 
-                className="w-full md:w-64 bg-black border border-bs-border text-white pl-12 pr-4 py-2 focus:border-bs-jade outline-none font-mono text-sm placeholder-gray-700 transition-colors uppercase"
+                className="w-full md:w-64 bg-black border border-bs-border text-white pl-12 pr-4 py-2 focus:border-bs-jade outline-none font-tech text-sm placeholder-gray-700 transition-colors uppercase"
             />
         </div>
       </div>
 
       {loading ? (
-        <div className="flex justify-center items-center h-64 font-mono text-bs-jade animate-pulse uppercase tracking-widest">
+        <div className="flex justify-center items-center h-64 font-tech text-bs-jade animate-pulse uppercase tracking-widest">
             [ LOADING ASSETS... ]
         </div>
       ) : (
@@ -60,14 +60,14 @@ const Products = () => {
                         <h3 className="text-white font-tech text-lg mb-1 group-hover:text-bs-jade truncate uppercase">
                             {produto.nome}
                         </h3>
-                        <p className="text-gray-500 text-xs font-mono mb-4 uppercase">
+                        <p className="text-gray-500 text-xs font-tech mb-4 uppercase">
                             SKU: GEN-{produto.id.toString().padStart(3, '0')}
                         </p>
                     </div>
                 </Link>
                 {/* ÁREA DE AÇÃO (Carrinho) */}
                 <div className="flex items-center justify-between mt-auto pt-4 border-t border-bs-border/50">
-                    <span className="text-bs-jade font-mono text-lg">
+                    <span className="text-bs-jade font-tech text-lg">
                         R$ {parseFloat(produto.preco_venda).toFixed(2)}
                     </span>
                     <button 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { Package, AlertCircle, ShoppingCart, Cpu, ShieldCheck } from 'lucide-react';
+import { Package, AlertCircle, ShoppingCart, Cpu, ShieldCheck, ArrowRight } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 
 const api = axios.create({ baseURL: '/api' });
@@ -29,22 +29,23 @@ const Home = () => {
         <h1 className="text-4xl md:text-6xl font-tech text-white mb-6">
           SECURE YOUR <span className="text-bs-jade">ASSETS</span>
         </h1>
-        <p className="text-gray-400 font-mono">
+        <p className="text-gray-400 font-tech">
           Hardware Wallets Open-Source (DIY). <br />
           Firmware auditável e privacidade absoluta.
         </p>
 
         <div className="mt-8 flex justify-center gap-4">
-            <Link to="/produtos" className="bg-bs-jade hover:bg-[#00ffa3]/90 text-black font-bold py-3 px-8 uppercase tracking-widest transition-transform active:scale-95 font-mono">
-                VER PRODUTOS
+            {/* BOTÃO PADRONIZADO */}
+            <Link to="/produtos" className="bg-bs-jade hover:bg-[#00ffa3]/90 text-black font-bold font-tech py-3 px-8 uppercase tracking-widest transition-transform active:scale-95 flex items-center gap-2">
+                VER PRODUTOS <ArrowRight size={20} />
             </Link>
         </div>
       </div>
       
-      {loading && <div className="text-bs-jade text-center animate-pulse font-mono">INITIALIZING UPLINK...</div>}
+      {loading && <div className="text-bs-jade text-center animate-pulse font-tech">INITIALIZING UPLINK...</div>}
       
       {error && (
-        <div className="text-red-500 text-center bg-red-900/10 p-4 font-mono flex items-center justify-center gap-2 border border-red-500/30">
+        <div className="text-red-500 text-center bg-red-900/10 p-4 font-tech flex items-center justify-center gap-2 border border-red-500/30">
           <AlertCircle size={20} /> {error}
         </div>
       )}
@@ -56,7 +57,7 @@ const Home = () => {
                 <h2 className="text-2xl font-tech text-white flex items-center gap-2">
                     <ShieldCheck className="text-bs-jade"/> DESTAQUES
                 </h2>
-                <Link to="/produtos" className="text-bs-jade hover:underline font-mono text-sm">Ver todos &rarr;</Link>
+                <Link to="/produtos" className="text-bs-jade hover:underline font-tech text-sm">Ver todos &rarr;</Link>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -76,8 +77,8 @@ const Home = () => {
                         </div>
                         
                         <div className="p-6 pb-2">
-                            <h3 className="text-xl font-bold text-white mb-2 font-mono group-hover:text-bs-jade transition-colors uppercase">{produto.nome}</h3>
-                            <p className="text-gray-500 text-sm mb-4 font-mono line-clamp-2">
+                            <h3 className="text-xl font-bold text-white mb-2 font-tech uppercase tracking-wide group-hover:text-bs-jade transition-colors">{produto.nome}</h3>
+                            <p className="text-gray-500 text-sm mb-4 font-tech line-clamp-2">
                                 {produto.descricao || "Dispositivo DIY de alta performance."}
                             </p>
                         </div>
@@ -85,7 +86,7 @@ const Home = () => {
                     {/* ÁREA DE AÇÃO (Carrinho) */}
                     <div className="px-6 pb-6 mt-auto">
                         <div className="flex items-center justify-between pt-4 border-t border-bs-border/30">
-                            <span className="text-bs-jade font-bold text-xl font-mono">
+                            <span className="text-bs-jade font-bold text-xl font-tech">
                                 R$ {parseFloat(produto.preco_venda).toFixed(2)}
                             </span>
                             <button 

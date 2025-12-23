@@ -9,7 +9,7 @@ const About = () => {
         <h1 className="text-4xl md:text-6xl font-tech text-white mb-6">
           VERIFY. <span className="text-bs-jade">DON'T TRUST.</span>
         </h1>
-        <p className="text-gray-400 font-mono">
+        <p className="text-gray-400 font-tech">
           Democratizando a segurança digital através de hardware acessível e transparente.
         </p>
       </div>
@@ -44,7 +44,7 @@ const About = () => {
       </div>
 
       <div className="border-l-4 border-bs-jade pl-6 py-2 bg-bs-card/30">
-        <p className="text-gray-300 font-mono italic">
+        <p className="text-gray-300 font-tech italic">
           "Acreditamos que a segurança não deve ser um privilégio caro. Ao utilizar hardware acessível e software aberto, entregamos a mesma segurança dos grandes players, por uma fração do preço."
         </p>
       </div>

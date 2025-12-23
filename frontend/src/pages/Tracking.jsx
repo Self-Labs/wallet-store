@@ -42,7 +42,7 @@ const Tracking = () => {
         <div className="lg:col-span-2">
             <div className="bg-bs-card border border-bs-border p-6">
                 <form onSubmit={handleTrack} className="flex flex-col gap-4">
-                    <label className="text-gray-500 font-mono text-xs uppercase tracking-widest">
+                    <label className="text-gray-500 font-tech text-xs uppercase tracking-widest">
                         Shipment UUID / Tracking Code
                     </label>
                     <div className="flex gap-2">
@@ -52,13 +52,13 @@ const Tracking = () => {
                                 value={code}
                                 onChange={(e) => setCode(e.target.value.toUpperCase())}
                                 placeholder="OJ123456789BR"
-                                className="w-full bg-black border border-bs-border text-white p-4 font-mono uppercase focus:border-bs-jade outline-none transition-colors"
+                                className="w-full bg-black border border-bs-border text-white p-4 font-tech uppercase focus:border-bs-jade outline-none transition-colors"
                             />
                         </div>
                         <button 
                             type="submit" 
                             disabled={loading}
-                            className="bg-bs-jade text-black font-bold px-8 uppercase tracking-widest hover:bg-[#00ffa3]/90 disabled:opacity-50 transition-colors flex items-center gap-2"
+                            className="bg-bs-jade text-black font-bold font-tech px-8 uppercase tracking-widest hover:bg-[#00ffa3]/90 disabled:opacity-50 transition-colors flex items-center gap-2"
                         >
                             {loading ? '...' : <ArrowRight />}
                         </button>
@@ -66,7 +66,7 @@ const Tracking = () => {
                 </form>
 
                 {error && (
-                    <div className="mt-6 p-4 border border-red-900/50 bg-red-900/10 text-red-500 font-mono text-sm flex items-center gap-3">
+                    <div className="mt-6 p-4 border border-red-900/50 bg-red-900/10 text-red-500 font-tech text-sm flex items-center gap-3">
                         <XCircle size={16} /> {error}
                     </div>
                 )}
@@ -80,7 +80,7 @@ const Tracking = () => {
                     <div className="absolute top-0 left-0 w-1 h-full bg-bs-jade"></div>
                     
                     <h2 className="text-white font-tech text-2xl mb-1">{result.tracking_code}</h2>
-                    <p className={`font-mono text-xs font-bold uppercase mb-6 
+                    <p className={`font-tech text-xs font-bold uppercase mb-6 
                         ${result.status === 'DELIVERED' ? 'text-bs-jade' : 'text-bs-blue'}`}>
                         STATUS: {result.status}
                     </p>
@@ -89,7 +89,7 @@ const Tracking = () => {
                         <div className="flex gap-3">
                             <CheckCircle className="text-gray-600 mt-1" size={16} />
                             <div>
-                                <p className="text-gray-300 font-mono text-sm uppercase leading-relaxed">
+                                <p className="text-gray-300 font-tech text-sm uppercase leading-relaxed">
                                     {result.message}
                                 </p>
                             </div>
@@ -97,13 +97,13 @@ const Tracking = () => {
                     </div>
 
                     {result.status === 'DELIVERED' && (
-                        <div className="mt-8 pt-4 border-t border-bs-border text-[10px] font-mono text-gray-600 uppercase text-center">
+                        <div className="mt-8 pt-4 border-t border-bs-border text-[10px] font-tech text-gray-600 uppercase text-center">
                             /// DATA PURGED FROM SERVERS
                         </div>
                     )}
                 </div>
             ) : (
-                <div className="h-full border border-dashed border-bs-border flex items-center justify-center text-gray-700 font-mono text-xs uppercase p-8 text-center">
+                <div className="h-full border border-dashed border-bs-border flex items-center justify-center text-gray-700 font-tech text-xs uppercase p-8 text-center">
                     Awaiting Input Signal...
                 </div>
             )}
