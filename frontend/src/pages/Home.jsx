@@ -20,6 +20,7 @@ const Home = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 animate-fade-in">
+
       {/* HERO SECTION */}
       <div className="text-center mb-20 relative">
         {/* Efeito de fundo sutil para dar profundidade sem atrapalhar a leitura */}
@@ -32,7 +33,6 @@ const Home = () => {
           Firmware auditável e privacidade absoluta.
         </p>
         <div className="mt-8 flex justify-center gap-4">
-            {/* BOTÃO PADRONIZADO */}
             <Link to="/produtos" className="bg-bs-jade hover:bg-[#00ffa3]/90 text-black font-bold font-tech py-3 px-8 uppercase tracking-widest transition-transform active:scale-95 flex items-center gap-2">
                 VER PRODUTOS <ArrowRight size={20} />
             </Link>
@@ -44,6 +44,7 @@ const Home = () => {
           <AlertCircle size={20} /> {error}
         </div>
       )}
+
       {/* DESTAQUES */}
       {!loading && !error && (
         <>
@@ -56,6 +57,7 @@ const Home = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {produtos.slice(0, 3).map(produto => (
                 <div key={produto.id} className="group bg-bs-card border border-bs-border hover:border-bs-jade transition-all duration-300 flex flex-col h-full relative">
+
                     {/* ÁREA DE CLIQUE (Vai para Detalhes) */}
                     <Link to={`/produto/${produto.id}`} className="flex-grow flex flex-col">
                         <div className="h-48 bg-bs-dark/50 flex items-center justify-center border-b border-bs-border/30 relative overflow-hidden">
@@ -75,6 +77,7 @@ const Home = () => {
                             </p>
                         </div>
                     </Link>
+
                     {/* ÁREA DE AÇÃO (Carrinho) */}
                     <div className="px-6 pb-6 mt-auto">
                         <div className="flex items-center justify-between pt-4 border-t border-bs-border/30">

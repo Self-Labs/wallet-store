@@ -4,6 +4,7 @@ import { Shield, EyeOff, Wrench } from 'lucide-react';
 const About = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 animate-fade-in">
+
       {/* Banner Hero */}
       <div className="text-center mb-16">
         <h1 className="text-4xl md:text-6xl font-tech text-white mb-6">
@@ -13,6 +14,7 @@ const About = () => {
           Democratizando a segurança digital através de hardware acessível e transparente.
         </p>
       </div>
+
       <div className="grid md:grid-cols-3 gap-8 mb-16">
         {/* Card 1: DIY */}
         <div className="bg-bs-card border border-bs-border p-6 text-center">
@@ -22,6 +24,7 @@ const About = () => {
             Apoiamos projetos como Blockstream Jade e Krux. Montamos o hardware para que você foque na segurança.
           </p>
         </div>
+
         {/* Card 2: Privacidade */}
         <div className="bg-bs-card border border-bs-border p-6 text-center">
           <EyeOff className="w-12 h-12 text-bs-jade mx-auto mb-4" />
@@ -30,6 +33,7 @@ const About = () => {
             Privacidade radical. Seus dados de entrega são deletados automaticamente após o recebimento.
           </p>
         </div>
+
         {/* Card 3: Open Source */}
         <div className="bg-bs-card border border-bs-border p-6 text-center">
           <Shield className="w-12 h-12 text-bs-jade mx-auto mb-4" />
@@ -39,6 +43,7 @@ const About = () => {
           </p>
         </div>
       </div>
+
       <div className="border-l-4 border-bs-jade pl-6 py-2 bg-bs-card/30">
         <p className="text-gray-300 font-tech italic">
           "Acreditamos que a segurança não deve ser um privilégio caro. Ao utilizar hardware acessível e software aberto, entregamos a mesma segurança dos grandes players, por uma fração do preço."

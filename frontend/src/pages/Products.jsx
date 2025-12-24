@@ -40,6 +40,7 @@ const Products = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {produtos.map(produto => (
             <div key={produto.id} className="group bg-bs-card border border-bs-border p-4 hover:border-bs-jade/50 transition-all duration-300 flex flex-col relative h-full">
+
                 {/* ÁREA DE CLIQUE (Vai para Detalhes) */}
                 <Link to={`/produto/${produto.id}`} className="flex-grow flex flex-col">
                     <div className="h-40 bg-black/50 flex items-center justify-center border border-bs-border mb-4 relative overflow-hidden">
@@ -63,6 +64,7 @@ const Products = () => {
                         </p>
                     </div>
                 </Link>
+
                 {/* ÁREA DE AÇÃO (Carrinho) */}
                 <div className="flex items-center justify-between mt-auto pt-4 border-t border-bs-border/50">
                     <span className="text-bs-jade font-tech text-lg">

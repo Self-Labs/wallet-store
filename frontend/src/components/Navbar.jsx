@@ -11,7 +11,7 @@ const Navbar = () => {
     <nav className="border-b border-bs-border bg-bs-card/80 backdrop-blur-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          
+
           {/* 1. Logo */}
           <Link to="/" className="flex items-center gap-2 group" onClick={() => setIsMenuOpen(false)}>
             <div className="w-2 h-8 bg-bs-jade group-hover:shadow-[0_0_10px_#00FFA3] transition-all"></div>
@@ -79,7 +79,7 @@ const Navbar = () => {
               RASTREIO
               <ChevronRight size={16} />
             </Link>
-            
+
             <Link 
               to="/contato" 
               className="block px-4 py-3 text-gray-300 hover:text-black hover:bg-bs-jade transition-colors border-l-2 border-transparent hover:border-white flex justify-between items-center"

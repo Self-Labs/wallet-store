@@ -31,11 +31,13 @@ const Tracking = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 animate-fade-in">
+
        {/* HEADER PADRÃO */}
       <h1 className="text-3xl font-tech text-white mb-8 flex items-center gap-3">
             <span className="text-bs-jade">///</span> TRACKING
       </h1>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+
         {/* Coluna de Busca */}
         <div className="lg:col-span-2">
             <div className="bg-bs-card border border-bs-border p-6">
@@ -69,6 +71,7 @@ const Tracking = () => {
                 )}
             </div>
         </div>
+
         {/* Coluna de Resultado */}
         <div className="lg:col-span-1">
             {result ? (

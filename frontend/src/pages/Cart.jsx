@@ -25,6 +25,7 @@ const Cart = () => {
         <span className="text-bs-jade">///</span> ORDER MANIFEST
       </h1>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+
         {/* Lista de Itens */}
         <div className="lg:col-span-2 space-y-4">
           {cartItems.map(item => (
@@ -37,6 +38,7 @@ const Cart = () => {
                 <p className="text-gray-500 text-xs font-tech">SKU: DIY-{item.id}</p>
                 <div className="text-bs-jade font-tech mt-1">R$ {item.preco_venda}</div>
               </div>
+
               {/* Controles de Quantidade */}
               <div className="flex items-center gap-3 bg-black border border-bs-border px-2 py-1">
                 <button onClick={() => updateQuantity(item.id, -1)} className="text-gray-400 hover:text-white p-1">
@@ -57,6 +59,7 @@ const Cart = () => {
             </div>
           ))}
         </div>
+
         {/* Resumo do Pedido */}
         <div className="bg-bs-card border border-bs-border p-6 h-fit sticky top-24">
           <h3 className="text-white font-tech text-xl mb-6 border-b border-bs-border pb-4">RESUMO</h3>
@@ -72,6 +75,7 @@ const Cart = () => {
             <span>TOTAL</span>
             <span className="text-bs-jade">R$ {cartTotal.toFixed(2)}</span>
           </div>
+
           {/* Link para Checkout */}
           <Link 
             to="/checkout" 

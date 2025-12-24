@@ -182,6 +182,7 @@ const Checkout = () => {
         <Lock className="text-bs-jade" /> CHECKOUT SEGURO
       </h1>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+
         {/* COLUNA 1: Formulário */}
         <div className="lg:col-span-2">
           <div className="bg-bs-card border border-bs-border p-8 mb-8">
@@ -192,6 +193,7 @@ const Checkout = () => {
               </p>
             </div>
             <form onSubmit={handleSubmit} className="space-y-6">
+
               {/* Dados Pessoais */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -249,6 +251,7 @@ const Checkout = () => {
                   />
                 </div>
               </div>
+
               {/* Endereço Completo */}
               <div className="pt-4 border-t border-bs-border/30">
                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
@@ -346,6 +349,7 @@ const Checkout = () => {
                     </div>
                  </div>
               </div>
+
               {/* Rodapé do FORM */}
               <div className="pt-6 border-t border-bs-border">
                 <h3 className="text-white font-tech text-lg mb-4 flex items-center gap-2">
@@ -367,6 +371,7 @@ const Checkout = () => {
             </form>
           </div>
         </div>
+
         {/* COLUNA 2: Resumo */}
         <div className="h-fit sticky top-24">
           <div className="bg-bs-card border border-bs-border p-6">
