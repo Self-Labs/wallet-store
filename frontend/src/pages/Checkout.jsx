@@ -177,13 +177,11 @@ const Checkout = () => {
   const labelStyle = "block text-bs-jade text-xs font-bold mb-2 uppercase";
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12">
+    <div className="max-w-7xl mx-auto px-4 py-8 animate-fade-in">
       <h1 className="text-3xl font-tech text-white mb-8 flex items-center gap-3">
         <Lock className="text-bs-jade" /> CHECKOUT SEGURO
       </h1>
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-        
         {/* COLUNA 1: Formulário */}
         <div className="lg:col-span-2">
           <div className="bg-bs-card border border-bs-border p-8 mb-8">
@@ -193,9 +191,7 @@ const Checkout = () => {
                 AVISO: SEUS DADOS PESSOAIS SERÃO DESTRUÍDOS APÓS A ENTREGA.
               </p>
             </div>
-
             <form onSubmit={handleSubmit} className="space-y-6">
-              
               {/* Dados Pessoais */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -226,7 +222,6 @@ const Checkout = () => {
                   {cpfError && <span className="text-red-500 text-[10px] font-mono mt-1">CPF INVÁLIDO</span>}
                 </div>
               </div>
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className={labelStyle}>E-mail</label>
@@ -254,7 +249,6 @@ const Checkout = () => {
                   />
                 </div>
               </div>
-
               {/* Endereço Completo */}
               <div className="pt-4 border-t border-bs-border/30">
                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
@@ -291,7 +285,6 @@ const Checkout = () => {
                       />
                     </div>
                  </div>
-
                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
                     <div>
                        <label className={labelStyle}>Número</label>
@@ -327,7 +320,6 @@ const Checkout = () => {
                       />
                     </div>
                  </div>
-
                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="md:col-span-2">
                        <label className={labelStyle}>Cidade</label>
@@ -354,7 +346,6 @@ const Checkout = () => {
                     </div>
                  </div>
               </div>
-
               {/* Rodapé do FORM */}
               <div className="pt-6 border-t border-bs-border">
                 <h3 className="text-white font-tech text-lg mb-4 flex items-center gap-2">
@@ -366,7 +357,6 @@ const Checkout = () => {
                   <span className="text-bs-jade">Por enquanto, o pedido será criado como PENDENTE.</span>
                 </div>
               </div>
-
               <button 
                 type="submit" 
                 disabled={loading || cpfError} 
@@ -377,7 +367,6 @@ const Checkout = () => {
             </form>
           </div>
         </div>
-
         {/* COLUNA 2: Resumo */}
         <div className="h-fit sticky top-24">
           <div className="bg-bs-card border border-bs-border p-6">
@@ -390,18 +379,15 @@ const Checkout = () => {
                 </div>
               ))}
             </div>
-            
             <div className="border-t border-bs-border pt-4 flex justify-between items-center">
               <span className="text-white font-bold">TOTAL</span>
               <span className="text-bs-jade text-xl font-mono">R$ {cartTotal.toFixed(2)}</span>
             </div>
           </div>
-          
           <div className="mt-4 flex items-center justify-center gap-2 text-gray-600 text-xs font-mono">
             <Truck size={14} /> Envios via Carrier
           </div>
         </div>
-
       </div>
     </div>
   );

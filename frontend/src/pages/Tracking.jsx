@@ -30,14 +30,12 @@ const Tracking = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12">
+    <div className="max-w-7xl mx-auto px-4 py-8 animate-fade-in">
        {/* HEADER PADRÃO */}
       <h1 className="text-3xl font-tech text-white mb-8 flex items-center gap-3">
             <span className="text-bs-jade">///</span> TRACKING
       </h1>
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-        
         {/* Coluna de Busca */}
         <div className="lg:col-span-2">
             <div className="bg-bs-card border border-bs-border p-6">
@@ -64,7 +62,6 @@ const Tracking = () => {
                         </button>
                     </div>
                 </form>
-
                 {error && (
                     <div className="mt-6 p-4 border border-red-900/50 bg-red-900/10 text-red-500 font-tech text-sm flex items-center gap-3">
                         <XCircle size={16} /> {error}
@@ -72,19 +69,16 @@ const Tracking = () => {
                 )}
             </div>
         </div>
-
         {/* Coluna de Resultado */}
         <div className="lg:col-span-1">
             {result ? (
                 <div className="bg-bs-card border border-bs-jade p-6 animate-fade-in relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-1 h-full bg-bs-jade"></div>
-                    
                     <h2 className="text-white font-tech text-2xl mb-1">{result.tracking_code}</h2>
                     <p className={`font-tech text-xs font-bold uppercase mb-6 
                         ${result.status === 'DELIVERED' ? 'text-bs-jade' : 'text-bs-blue'}`}>
                         STATUS: {result.status}
                     </p>
-
                     <div className="space-y-4">
                         <div className="flex gap-3">
                             <CheckCircle className="text-gray-600 mt-1" size={16} />
@@ -95,7 +89,6 @@ const Tracking = () => {
                             </div>
                         </div>
                     </div>
-
                     {result.status === 'DELIVERED' && (
                         <div className="mt-8 pt-4 border-t border-bs-border text-[10px] font-tech text-gray-600 uppercase text-center">
                             /// DATA PURGED FROM SERVERS

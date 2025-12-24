@@ -20,11 +20,10 @@ const Cart = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12">
+    <div className="max-w-7xl mx-auto px-4 py-8 animate-fade-in">
       <h1 className="text-3xl font-tech text-white mb-8 flex items-center gap-3">
         <span className="text-bs-jade">///</span> ORDER MANIFEST
       </h1>
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
         {/* Lista de Itens */}
         <div className="lg:col-span-2 space-y-4">
@@ -33,13 +32,11 @@ const Cart = () => {
               <div className="w-20 h-20 bg-black border border-bs-border flex items-center justify-center text-gray-600">
                 <Package size={24} />
               </div>
-              
               <div className="flex-grow">
                 <h3 className="text-white font-tech text-lg">{item.nome}</h3>
                 <p className="text-gray-500 text-xs font-tech">SKU: DIY-{item.id}</p>
                 <div className="text-bs-jade font-tech mt-1">R$ {item.preco_venda}</div>
               </div>
-
               {/* Controles de Quantidade */}
               <div className="flex items-center gap-3 bg-black border border-bs-border px-2 py-1">
                 <button onClick={() => updateQuantity(item.id, -1)} className="text-gray-400 hover:text-white p-1">
@@ -50,7 +47,6 @@ const Cart = () => {
                   <Plus size={14} />
                 </button>
               </div>
-
               <button 
                 onClick={() => removeFromCart(item.id)}
                 className="text-red-900 hover:text-red-500 p-2 transition-colors"
@@ -61,11 +57,9 @@ const Cart = () => {
             </div>
           ))}
         </div>
-
         {/* Resumo do Pedido */}
         <div className="bg-bs-card border border-bs-border p-6 h-fit sticky top-24">
           <h3 className="text-white font-tech text-xl mb-6 border-b border-bs-border pb-4">RESUMO</h3>
-          
           <div className="flex justify-between text-gray-400 font-tech mb-2">
             <span>Subtotal</span>
             <span>R$ {cartTotal.toFixed(2)}</span>
@@ -74,12 +68,10 @@ const Cart = () => {
             <span>Frete</span>
             <span className="text-xs self-center">CALCULADO NO CHECKOUT</span>
           </div>
-
           <div className="flex justify-between text-white font-bold font-tech text-xl mb-8 pt-4 border-t border-bs-border">
             <span>TOTAL</span>
             <span className="text-bs-jade">R$ {cartTotal.toFixed(2)}</span>
           </div>
-
           {/* Link para Checkout */}
           <Link 
             to="/checkout" 
@@ -87,7 +79,6 @@ const Cart = () => {
           >
             Checkout Seguro <ArrowRight size={16} />
           </Link>
-          
           <p className="text-xs text-gray-600 text-center mt-4 font-tech">
             Dados criptografados e destruídos após o envio.
           </p>

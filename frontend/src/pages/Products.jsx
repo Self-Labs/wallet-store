@@ -18,12 +18,11 @@ const Products = () => {
   }, []);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12 animate-fade-in">
+    <div className="max-w-7xl mx-auto px-4 py-8 animate-fade-in">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-6">
         <h1 className="text-3xl font-tech text-white flex items-center gap-3">
             <span className="text-bs-jade">///</span> CATALOG
         </h1>
-
         <div className="relative w-full md:w-auto">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={18}/>
             <input 
@@ -33,7 +32,6 @@ const Products = () => {
             />
         </div>
       </div>
-
       {loading ? (
         <div className="flex justify-center items-center h-64 font-tech text-bs-jade animate-pulse uppercase tracking-widest">
             [ LOADING ASSETS... ]

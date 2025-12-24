@@ -19,13 +19,11 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-16 animate-fade-in">
-      
+    <div className="max-w-7xl mx-auto px-4 py-8 animate-fade-in">
       {/* HERO SECTION */}
       <div className="text-center mb-20 relative">
         {/* Efeito de fundo sutil para dar profundidade sem atrapalhar a leitura */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-bs-jade/5 rounded-full blur-3xl -z-10"></div>
-        
         <h1 className="text-4xl md:text-6xl font-tech text-white mb-6">
           SECURE YOUR <span className="text-bs-jade">ASSETS</span>
         </h1>
@@ -33,7 +31,6 @@ const Home = () => {
           Hardware Wallets Open-Source (DIY). <br />
           Firmware auditável e privacidade absoluta.
         </p>
-
         <div className="mt-8 flex justify-center gap-4">
             {/* BOTÃO PADRONIZADO */}
             <Link to="/produtos" className="bg-bs-jade hover:bg-[#00ffa3]/90 text-black font-bold font-tech py-3 px-8 uppercase tracking-widest transition-transform active:scale-95 flex items-center gap-2">
@@ -41,15 +38,12 @@ const Home = () => {
             </Link>
         </div>
       </div>
-      
       {loading && <div className="text-bs-jade text-center animate-pulse font-tech">INITIALIZING UPLINK...</div>}
-      
       {error && (
         <div className="text-red-500 text-center bg-red-900/10 p-4 font-tech flex items-center justify-center gap-2 border border-red-500/30">
           <AlertCircle size={20} /> {error}
         </div>
       )}
-      
       {/* DESTAQUES */}
       {!loading && !error && (
         <>
@@ -59,7 +53,6 @@ const Home = () => {
                 </h2>
                 <Link to="/produtos" className="text-bs-jade hover:underline font-tech text-sm">Ver todos &rarr;</Link>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {produtos.slice(0, 3).map(produto => (
                 <div key={produto.id} className="group bg-bs-card border border-bs-border hover:border-bs-jade transition-all duration-300 flex flex-col h-full relative">
@@ -75,7 +68,6 @@ const Home = () => {
                                 <div className="absolute inset-0 bg-black/80 flex items-center justify-center font-tech text-red-500 text-xl tracking-widest">ESGOTADO</div>
                             )}
                         </div>
-                        
                         <div className="p-6 pb-2">
                             <h3 className="text-xl font-bold text-white mb-2 font-tech uppercase tracking-wide group-hover:text-bs-jade transition-colors">{produto.nome}</h3>
                             <p className="text-gray-500 text-sm mb-4 font-tech line-clamp-2">

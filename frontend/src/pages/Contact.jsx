@@ -3,14 +3,12 @@ import { Mail, Package, Send } from 'lucide-react';
 
 const Contact = () => {
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12 animate-fade-in">
+    <div className="max-w-7xl mx-auto px-4 py-8 animate-fade-in">
        {/* HEADER PADRÃO */}
       <h1 className="text-3xl font-tech text-white mb-8 flex items-center gap-3">
             <span className="text-bs-jade">///</span> CONTACT
       </h1>
-      
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        
         {/* Canais */}
         <div className="space-y-4">
             <div className="bg-bs-card border border-bs-border p-6 hover:border-bs-jade/30 transition-colors group cursor-default">
@@ -24,7 +22,6 @@ const Contact = () => {
                     </div>
                 </div>
             </div>
-
             <div className="bg-bs-card border border-bs-border p-6 hover:border-bs-jade/30 transition-colors group cursor-default">
                 <div className="flex items-center gap-4">
                     <div className="p-3 bg-black border border-bs-border text-bs-blue">
@@ -36,13 +33,11 @@ const Contact = () => {
                     </div>
                 </div>
             </div>
-            
             <div className="p-6 border border-dashed border-bs-border text-gray-600 font-tech text-xs uppercase leading-relaxed">
                 Use PGP encryption if necessary. <br/>
                 We respect your privacy and data sovereignty.
             </div>
         </div>
-
         {/* Formulário */}
         <div className="bg-bs-card border border-bs-border p-6">
             <form className="space-y-4">
