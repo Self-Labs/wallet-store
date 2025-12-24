@@ -12,7 +12,7 @@
 
 {% block extrastyle %}
 <style>
-    /* --- FONTES BLOCKSTREAM (Carregadas do Static) --- */
+    /* --- Fontes Blockstream (Carregadas do Static) --- */
     @font-face {
         font-family: 'Inter';
         src: url('{% static "fonts/Inter-VariableFont_opsz,wght.ttf" %}') format('truetype');
@@ -95,10 +95,27 @@
         font-weight: bold !important;
         text-transform: uppercase;
         transition: opacity 0.2s;
-        padding: 8px 15px !important;
+        
+        /* Flexbox para igualar <input> e <a> */
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        
+        /* Medidas Fixas */
+        height: 35px !important;
+        padding: 0 20px !important;
+        box-sizing: border-box !important;
+        
+        font-size: 12px !important;
+        text-decoration: none !important;
+        cursor: pointer !important;
+        border-radius: 0 !important;
+        margin: 0 5px !important; /* Espaço lateral */
+        vertical-align: middle !important;
     }
-    
-    a.button:link, a.button:visited, a.button:hover {
+
+    /* Garante que links com cara de botão tenham texto preto */
+    a.button:link, a.button:visited, a.button:hover, a.button:active {
         color: black !important;
     }
 
@@ -114,17 +131,20 @@
         background-color: #000 !important;
         border: 1px solid var(--border) !important;
         color: var(--primary) !important;
-        padding: 6px 10px !important; /* Padding reduzido para não inchar */
+        padding: 0 10px !important;
         border-radius: 0 !important;
         box-sizing: border-box !important;
-        height: 35px !important; /* Altura fixa para alinhar com botões */
-        min-height: 0 !important; /* Remove travas antigas do Django */
+        
+        /* Altura igual aos botões */
+        height: 35px !important;
+        min-height: 0 !important;
+        
         font-family: monospace !important;
         font-size: 13px !important;
-        vertical-align: middle !important; /* Alinha com ícones laterais (lápis, +) */
+        vertical-align: middle !important;
     }
 
-    /* Textarea (Altura livre) */
+    /* Textarea */
     textarea {
         background-color: #000 !important;
         border: 1px solid var(--border) !important;
@@ -141,7 +161,7 @@
         box-shadow: 0 0 5px rgba(0, 255, 163, 0.3) !important;
     }
 
-    /* Estilo Especial para Dropdowns (Select) */
+    /* Estilo Dropdown */
     select {
         appearance: none;
         -webkit-appearance: none;
