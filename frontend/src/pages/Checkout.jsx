@@ -155,15 +155,17 @@ const Checkout = () => {
       }))
     };
 
-    try {
+try {
       const response = await api.post('/pedidos/', payload);
-      // SUCESSO
-      clearCart(); // Limpa o carrinho
+      // SUCESSO: Limpa carrinho e redireciona para a página de sucesso com o ID
+      clearCart(); 
       alert(`PEDIDO #${response.data.id} CONFIRMADO!\n\nGuarde este ID para rastreio.`);
-      navigate('/'); // Futuramente mandaremos para uma página de sucesso
+      navigate(`/sucesso/${response.data.id}`);
     } catch (error) {
       console.error(error);
-      alert("ERRO AO PROCESSAR PEDIDO. Tente novamente.");
+      // Se o erro vier do backend com detalhes, mostre, senão mensagem genérica
+      const msg = error.response?.data?.error || "ERRO AO PROCESSAR PEDIDO. Tente novamente.";
+      alert(msg);
     } finally {
       setLoading(false);
     }

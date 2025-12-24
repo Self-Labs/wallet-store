@@ -1,10 +1,12 @@
 from rest_framework import viewsets
-from rest_framework.views import APIView
-from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from .models import Order
 from .serializers import OrderSerializer
 from .services import TrackingService
+from django.shortcuts import get_object_or_404
 
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
@@ -53,3 +55,19 @@ class PublicTrackingView(APIView):
         }
         # Se não achar no mapa, retorna texto genérico
         return msgs.get(status, "Aguardando atualização...")
+
+@api_view(['GET'])
+@permission_classes([AllowAny]) # Permite que o cliente acesse sem estar logado
+def get_public_order_details(request, pk):
+    """
+    Retorna apenas os dados seguros do pedido para a tela de pagamento.
+    Não expõe dados sensíveis do cliente (endereço/CPF) nesta rota pública.
+    """
+    order = get_object_or_404(Order, pk=pk)
+    
+    return Response({
+        "id": order.id,
+        "total": float(order.total), # Usa a propriedade calculada no models
+        "status": order.status,
+        "created_at": order.created_at
+    })

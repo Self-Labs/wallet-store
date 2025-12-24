@@ -34,6 +34,10 @@ class Order(models.Model):
     def __str__(self):
         return f"Pedido #{self.id} - {self.status}"
 
+    @property
+    def total(self):
+        return sum(item.total for item in self.items.all())
+
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
     product = models.ForeignKey(Produto, on_delete=models.PROTECT) # Se deletar produto, mantém o registro da venda

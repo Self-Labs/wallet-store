@@ -10,6 +10,7 @@ import Tracking from './pages/Tracking';
 import Contact from './pages/Contact';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
+import OrderSuccess from './pages/OrderSuccess';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/contato" element={<Contact />} />
           <Route path="/carrinho" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/sucesso/:id" element={<OrderSuccess />} />
         </Routes>
       </main>
       <Footer />
