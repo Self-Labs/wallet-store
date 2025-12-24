@@ -92,7 +92,7 @@ const Home = () => {
                             <button 
                                 onClick={() => addToCart(produto)}
                                 disabled={produto.estoque_atual <= 0}
-                                className="bg-white hover:bg-bs-jade text-black p-2 rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-transparent hover:border-bs-jade"
+                                className="text-gray-400 hover:text-bs-jade hover:bg-white/5 p-2 transition-all disabled:opacity-20 disabled:cursor-not-allowed"
                             >
                                 <ShoppingCart size={20} />
                             </button>

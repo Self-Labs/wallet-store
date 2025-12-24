@@ -73,7 +73,7 @@ const Products = () => {
                     <button 
                         onClick={() => addToCart(produto)}
                         disabled={produto.estoque_atual <= 0}
-                        className="text-gray-400 hover:text-white hover:bg-white/5 p-2 transition-all disabled:opacity-20 disabled:cursor-not-allowed"
+                        className="text-gray-400 hover:text-bs-jade hover:bg-white/5 p-2 transition-all disabled:opacity-20 disabled:cursor-not-allowed"
                     >
                         <ShoppingCart size={18} />
                     </button>
