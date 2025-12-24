@@ -79,7 +79,7 @@
         color: var(--primary) !important;
     }
     
-    /* Links */
+    /* Links Gerais */
     a:link, a:visited {
         color: var(--primary) !important;
     }
@@ -88,7 +88,7 @@
     }
 
     /* Botões */
-    .button, input[type=submit], .submit-row input {
+    .button, input[type=submit], .submit-row input, a.button {
         background: var(--primary) !important;
         color: black !important;
         border: none !important;
@@ -97,6 +97,11 @@
         transition: opacity 0.2s;
         padding: 8px 15px !important;
     }
+    
+    a.button:link, a.button:visited, a.button:hover {
+        color: black !important;
+    }
+
     .button:hover, input[type=submit]:hover {
         opacity: 0.8;
     }
