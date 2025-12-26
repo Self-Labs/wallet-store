@@ -116,14 +116,14 @@ const Checkout = () => {
         const shippingRes = await api.post('/public/frete/calcular/', shippingPayload);
         
         if (shippingRes.data.length === 0) {
-           setFormError('NENHUMA OPÇÃO DE FRETE ENCONTRADA PARA ESTE CEP.');
+           setFormError("NENHUMA OPÇÃO DE FRETE ENCONTRADA PARA ESTE CEP.");
         } else {
            setShippingOptions(shippingRes.data);
         }
 
       } catch (error) {
         console.error("Erro CEP/Frete", error);
-        setFormError('ERRO AO CALCULAR FRETE. VERIFIQUE O CEP.');
+        setFormError("ERRO AO CALCULAR FRETE. VERIFIQUE O CEP.");
       } finally {
         setLoadingCep(false);
       }

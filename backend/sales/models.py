@@ -26,6 +26,10 @@ class Order(models.Model):
     tracking_code = models.CharField("Código de Rastreio", max_length=50, blank=True, null=True)
     transaction_id = models.CharField("ID Transação", max_length=100, blank=True, null=True)
 
+    # --- FRETE ---
+    shipping_method = models.CharField("Método de Envio", max_length=50, blank=True, null=True)
+    shipping_cost = models.DecimalField("Custo de Frete", max_digits=10, decimal_places=2, default=0.00)
+
     class Meta:
         verbose_name = "Pedido"
         verbose_name_plural = "Pedidos"
@@ -36,7 +40,9 @@ class Order(models.Model):
 
     @property
     def total(self):
-        return sum(item.total for item in self.items.all())
+        # Soma itens + custo do frete
+        items_total = sum(item.total for item in self.items.all())
+        return items_total + (self.shipping_cost or 0)
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
