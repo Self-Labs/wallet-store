@@ -1,5 +1,5 @@
 """
-Django settings for wallet store project.
+Django settings for Wallet Store project.
 """
 import os
 from pathlib import Path

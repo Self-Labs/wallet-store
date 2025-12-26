@@ -19,10 +19,12 @@ const Footer = () => {
           </p>
         </div>
 
-        <p className="text-bs-jade font-tech text-sm tracking-widest">
-          WALLET STORE // BLOCKSTREAM EDITION
+        <p className="text-white font-tech text-sm tracking-widest">
+          WALLET 
+          <span className="text-bs-jade">STORE</span> | <span className="text-bs-jade">DIY</span> 
+          EDITION
         </p>
-        <p className="text-gray-600 text-xs mt-2">
+        <p className="text-gray-600 font-tech text-xs mt-2">
           Cypherpunk Philosophy. Verify, Don't Trust.
         </p>
       </div>

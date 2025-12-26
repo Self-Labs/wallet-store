@@ -147,7 +147,8 @@ const Checkout = () => {
       full_name: formData.full_name,
       email: formData.email,
       cpf: formData.cpf,
-      address: formattedAddress, // Backend recebe o blocão de texto
+      phone: formData.phone,
+      address: formattedAddress,
       items: cartItems.map(item => ({
         product_id: item.id,
         quantity: item.quantity,
