@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { useCart } from '../contexts/CartContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ShieldAlert, Lock, Truck, CreditCard, Search, Loader2 } from 'lucide-react';
+import { ShieldAlert, Lock, Truck, CreditCard, Search, Loader2, Package } from 'lucide-react';
 
 const api = axios.create({ baseURL: '/api' });
 
-// --- MÁSCARAS E VALIDAÇÃO (Novas Funções) ---
+// --- MÁSCARAS E VALIDAÇÃO ---
 const maskCPF = (value) => {
   return value
     .replace(/\D/g, '')
@@ -57,9 +57,13 @@ const Checkout = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [loadingCep, setLoadingCep] = useState(false);
-  const [cpfError, setCpfError] = useState(false); // Estado para erro visual do CPF
+  const [cpfError, setCpfError] = useState(false); 
+  const [shippingOptions, setShippingOptions] = useState([]);
+  const [selectedShipping, setSelectedShipping] = useState(null);
+  
+  // Cálculo do Total Final com Frete
+  const finalTotal = cartTotal + (selectedShipping ? selectedShipping.price : 0);
 
-  // Estado granular para os campos do Melhor Envio
   const [formData, setFormData] = useState({
     full_name: '',
     email: '',
@@ -75,8 +79,8 @@ const Checkout = () => {
   });
 
   if (cartItems.length === 0) {
-    setTimeout(() => navigate('/'), 3000);
-    return <div className="text-center py-20 text-bs-jade font-mono">CARRINHO VAZIO. REDIRECIONANDO...</div>;
+    setTimeout(() => navigate('/produtos'), 3000);
+    return <div className="text-center py-20 text-bs-jade font-tech">CARRINHO VAZIO. REDIRECIONANDO...</div>;
   }
 
   // Função para buscar CEP
@@ -85,6 +89,7 @@ const Checkout = () => {
     if (cep.length === 8) {
       setLoadingCep(true);
       try {
+        // 1. Busca Endereço (ViaCEP)
         const { data } = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
         if (!data.erro) {
           setFormData(prev => ({
@@ -94,27 +99,37 @@ const Checkout = () => {
             city: data.localidade,
             state: data.uf
           }));
-          document.getElementById('numero-input').focus(); // Pula pro número
+          document.getElementById('numero-input').focus();
         }
+
+        // 2. Calcula Frete (Chama seu Backend)
+        const shippingPayload = {
+            cep: cep,
+            items: cartItems.map(item => ({ 
+                product_id: item.id, 
+                quantity: item.quantity,
+                price: item.preco_venda 
+            }))
+        };
+        const shippingRes = await api.post('/sales/public/frete/calcular/', shippingPayload);
+        setShippingOptions(shippingRes.data);
+
       } catch (error) {
-        console.error("Erro CEP");
+        console.error("Erro CEP/Frete", error);
       } finally {
         setLoadingCep(false);
       }
     }
   };
 
-  // Alterado para aplicar máscaras
   const handleChange = (e) => {
     let { name, value } = e.target;
-
     if (name === 'cpf') {
       value = maskCPF(value);
-      setCpfError(false); // Limpa erro ao digitar
+      setCpfError(false);
     }
     if (name === 'phone') value = maskPhone(value);
     if (name === 'cep') value = maskCEP(value);
-
     setFormData({ ...formData, [name]: value });
   };
 
@@ -135,9 +150,14 @@ const Checkout = () => {
       return;
     }
 
+    // Validação de Frete Obrigatório
+    if (!selectedShipping) {
+        alert("Por favor, selecione uma opção de frete.");
+        return;
+    }
+
     setLoading(true);
 
-    // Junta os campos numa string única para o Backend (que espera 'address' texto)
     const formattedAddress = `Logradouro: ${formData.street}, ${formData.number} ${formData.complement}
     Bairro: ${formData.district}
     Cidade: ${formData.city}/${formData.state}
@@ -153,14 +173,17 @@ const Checkout = () => {
         product_id: item.id,
         quantity: item.quantity,
         price_at_purchase: item.preco_venda
-      }))
+      })),
+      // Dados do frete (Opcional)
+      shipping_method: selectedShipping.name, 
+      shipping_cost: selectedShipping.price
     };
 
-try {
+    try {
       const response = await api.post('/pedidos/', payload);
       // SUCESSO: Limpa carrinho e redireciona para a página de sucesso com o ID
       clearCart(); 
-      alert(`PEDIDO #${response.data.id} CONFIRMADO!\n\nGuarde este ID para rastreio.`);
+      // alert(`PEDIDO #${response.data.id} CONFIRMADO!\n\nGuarde este ID para rastreio.`);
       navigate(`/sucesso/${response.data.id}`);
     } catch (error) {
       console.error(error);
@@ -173,10 +196,8 @@ try {
   };
 
   // Styles helpers para não poluir o JSX
-  const inputStyle = "w-full bg-black border border-bs-border text-white p-3 focus:border-bs-jade outline-none font-mono";
-  
-  // Estilo condicional para erro
-  const errorInputStyle = "w-full bg-black border border-red-500 text-red-500 p-3 focus:border-red-500 outline-none font-mono";
+  const inputStyle = "w-full bg-black border border-bs-border text-white p-3 focus:border-bs-jade outline-none font-tech";
+  const errorInputStyle = "w-full bg-black border border-red-500 text-red-500 p-3 focus:border-red-500 outline-none font-tech";
   const labelStyle = "block text-bs-jade text-xs font-bold mb-2 uppercase";
 
   return (
@@ -191,7 +212,7 @@ try {
           <div className="bg-bs-card border border-bs-border p-8 mb-8">
             <div className="flex items-center gap-2 mb-6 text-red-500 bg-red-900/10 p-4 border border-red-900/30">
               <ShieldAlert size={20} />
-              <p className="text-xs font-mono uppercase tracking-wider">
+              <p className="text-xs font-tech uppercase tracking-wider">
                 AVISO: SEUS DADOS PESSOAIS SERÃO DESTRUÍDOS APÓS A ENTREGA.
               </p>
             </div>
@@ -201,56 +222,56 @@ try {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className={labelStyle}>Nome Completo</label>
-                  <input 
-                    required 
-                    name="full_name" 
-                    value={formData.full_name} // Adicionado value
-                    onChange={handleChange} 
-                    type="text" 
-                    className={inputStyle} 
-                    placeholder="Satoshi Nakamoto" 
+                  <input
+                    required
+                    name="full_name"
+                    value={formData.full_name}
+                    onChange={handleChange}
+                    type="text"
+                    className={inputStyle}
+                    placeholder="Satoshi Nakamoto"
                   />
                 </div>
                 <div>
                   <label className={labelStyle}>CPF (Exigência Envio)</label>
-                  <input 
-                    required 
-                    name="cpf" 
-                    value={formData.cpf} // Adicionado value para máscara
-                    onChange={handleChange} 
-                    onBlur={handleCpfBlur} // Valida ao sair
-                    type="text" 
-                    className={cpfError ? errorInputStyle : inputStyle} 
-                    placeholder="000.000.000-00" 
-                    maxLength="14" 
+                  <input
+                    required
+                    name="cpf"
+                    value={formData.cpf}
+                    onChange={handleChange}
+                    onBlur={handleCpfBlur}
+                    type="text"
+                    className={cpfError ? errorInputStyle : inputStyle}
+                    placeholder="000.000.000-00"
+                    maxLength="14"
                   />
-                  {cpfError && <span className="text-red-500 text-[10px] font-mono mt-1">CPF INVÁLIDO</span>}
+                  {cpfError && <span className="text-red-500 text-[10px] font-tech mt-1">CPF INVÁLIDO</span>}
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className={labelStyle}>E-mail</label>
-                  <input 
-                    required 
-                    name="email" 
-                    value={formData.email} 
-                    onChange={handleChange} 
-                    type="email" 
-                    className={inputStyle} 
-                    placeholder="email@seguro.com" 
+                  <input
+                    required
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    type="email"
+                    className={inputStyle}
+                    placeholder="email@seguro.com"
                   />
                 </div>
                 <div>
                   <label className={labelStyle}>Telefone (SMS Entrega)</label>
-                  <input 
-                    required 
-                    name="phone" 
-                    value={formData.phone} // Adicionado value para máscara
-                    onChange={handleChange} 
-                    type="tel" 
-                    className={inputStyle} 
-                    placeholder="(11) 99999-9999" 
-                    maxLength="15" 
+                  <input
+                    required
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    type="tel"
+                    className={inputStyle}
+                    placeholder="(11) 99999-9999"
+                    maxLength="15"
                   />
                 </div>
               </div>
@@ -261,16 +282,16 @@ try {
                     <div>
                       <label className={labelStyle}>CEP</label>
                       <div className="relative">
-                        <input 
-                          required 
-                          name="cep" 
-                          value={formData.cep} // Adicionado value para máscara
-                          onChange={handleChange} 
-                          onBlur={handleCepBlur} 
-                          type="text" 
-                          maxLength="9" 
-                          className={inputStyle} 
-                          placeholder="00000-000" 
+                        <input
+                          required
+                          name="cep"
+                          value={formData.cep}
+                          onChange={handleChange}
+                          onBlur={handleCepBlur}
+                          type="text"
+                          maxLength="9"
+                          className={inputStyle}
+                          placeholder="00000-000"
                         />
                         {loadingCep && (
                           <div className="absolute right-3 top-3">
@@ -281,85 +302,112 @@ try {
                     </div>
                     <div className="md:col-span-2">
                       <label className={labelStyle}>Rua / Logradouro</label>
-                      <input 
-                        required 
-                        name="street" 
-                        value={formData.street} 
-                        onChange={handleChange} 
-                        type="text" 
-                        className={inputStyle} 
+                      <input
+                        required
+                        name="street"
+                        value={formData.street}
+                        onChange={handleChange}
+                        type="text"
+                        className={inputStyle}
                       />
                     </div>
                  </div>
                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
                     <div>
-                       <label className={labelStyle}>Número</label>
-                       <input 
-                        required 
-                        id="numero-input" 
-                        name="number" 
-                        value={formData.number} 
-                        onChange={handleChange} 
-                        type="text" 
-                        className={inputStyle} 
+                      <label className={labelStyle}>Número</label>
+                      <input
+                        required
+                        id="numero-input"
+                        name="number"
+                        value={formData.number}
+                        onChange={handleChange}
+                        type="text"
+                        className={inputStyle}
                       />
                     </div>
                     <div>
-                       <label className={labelStyle}>Complemento</label>
-                       <input 
-                        name="complement" 
-                        value={formData.complement} 
-                        onChange={handleChange} 
-                        type="text" 
-                        className={inputStyle} 
+                      <label className={labelStyle}>Complemento</label>
+                      <input
+                        name="complement"
+                        value={formData.complement}
+                        onChange={handleChange}
+                        type="text"
+                        className={inputStyle}
                       />
                     </div>
                     <div>
-                       <label className={labelStyle}>Bairro</label>
-                       <input 
-                        required 
-                        name="district" 
-                        value={formData.district} 
-                        onChange={handleChange} 
-                        type="text" 
-                        className={inputStyle} 
+                      <label className={labelStyle}>Bairro</label>
+                      <input
+                        required
+                        name="district"
+                        value={formData.district}
+                        onChange={handleChange}
+                        type="text"
+                        className={inputStyle}
                       />
                     </div>
                  </div>
                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="md:col-span-2">
-                       <label className={labelStyle}>Cidade</label>
-                       <input 
-                        required 
-                        name="city" 
-                        value={formData.city} 
-                        onChange={handleChange} 
-                        type="text" 
-                        className={inputStyle} 
+                      <label className={labelStyle}>Cidade</label>
+                      <input
+                        required
+                        name="city"
+                        value={formData.city}
+                        onChange={handleChange}
+                        type="text"
+                        className={inputStyle}
                       />
                     </div>
                     <div>
-                       <label className={labelStyle}>UF</label>
-                       <input 
-                        required 
-                        name="state" 
-                        value={formData.state} 
-                        onChange={handleChange} 
-                        type="text" 
-                        maxLength="2" 
-                        className={inputStyle} 
+                      <label className={labelStyle}>UF</label>
+                      <input
+                        required
+                        name="state"
+                        value={formData.state}
+                        onChange={handleChange}
+                        type="text"
+                        maxLength="2"
+                        className={inputStyle}
                       />
                     </div>
                  </div>
               </div>
+
+              {/* --- OPÇÕES DE FRETE --- */}
+              {shippingOptions.length > 0 && (
+                 <div className="mt-6 border-t border-bs-border pt-6 animate-fade-in">
+                     <h3 className="text-white font-tech text-lg mb-4 flex items-center gap-2"><Truck size={20}/> OPÇÕES DE FRETE</h3>
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                         {shippingOptions.map((opt, idx) => (
+                             <div 
+                                 key={idx}
+                                 onClick={() => setSelectedShipping(opt)}
+                                 className={`cursor-pointer p-4 border rounded-sm flex flex-col justify-between transition-all hover:border-bs-jade ${selectedShipping?.name === opt.name ? 'border-bs-jade bg-bs-jade/10' : 'border-bs-border bg-black'}`}
+                             >
+                                 <div className="flex justify-between items-center font-tech mb-2">
+                                     <div className="flex items-center gap-2">
+                                         <Package size={16} className={selectedShipping?.name === opt.name ? 'text-bs-jade' : 'text-gray-500'} />
+                                         <span className="font-bold text-white text-sm">{opt.company} {opt.name}</span>
+                                     </div>
+                                     <span className="text-bs-jade font-bold">R$ {opt.price.toFixed(2)}</span>
+                                 </div>
+                                 <div className="text-gray-500 text-xs font-tech ml-6">
+                                    Entrega estimada: <span className="text-white">{opt.days} dias úteis</span>
+                                 </div>
+                             </div>
+                         ))}
+                     </div>
+                 </div>
+              )}
 
               {/* Rodapé do FORM */}
               <div className="pt-6 border-t border-bs-border">
                 <h3 className="text-white font-tech text-lg mb-4 flex items-center gap-2">
                   <CreditCard size={20} /> PAGAMENTO
                 </h3>
-                <div className="bg-black p-4 border border-bs-border text-gray-500 text-sm font-mono text-center">
-                  INTEGRAÇÃO PIX / BITCOIN EM BREVE.
+                <div className="bg-black p-4 border border-bs-border text-gray-500 text-sm font-tech text-center">
+                  INTEGRAÇÃO PIX / BITCOIN NA PRÓXIMA ETAPA.
                   <br/>
                   <span className="text-bs-jade">Por enquanto, o pedido será criado como PENDENTE.</span>
                 </div>
@@ -381,18 +429,28 @@ try {
             <h3 className="text-white font-tech text-xl mb-6">RESUMO</h3>
             <div className="space-y-4 mb-6">
               {cartItems.map(item => (
-                <div key={item.id} className="flex justify-between text-sm font-mono text-gray-400">
+                <div key={item.id} className="flex justify-between text-sm font-tech text-gray-400">
                   <span>{item.quantity}x {item.nome}</span>
                   <span className="text-white">R$ {(item.preco_venda * item.quantity).toFixed(2)}</span>
                 </div>
               ))}
             </div>
-            <div className="border-t border-bs-border pt-4 flex justify-between items-center">
+
+            {/* --- EXIBE FRETE SELECIONADO NO RESUMO --- */}
+            {selectedShipping && (
+                <div className="flex justify-between text-sm font-tech text-gray-400 border-t border-bs-border pt-2 mt-2 animate-fade-in">
+                  <span>Frete ({selectedShipping.name})</span>
+                  <span className="text-white">R$ {selectedShipping.price.toFixed(2)}</span>
+                </div>
+            )}
+
+            <div className="border-t border-bs-border pt-4 flex justify-between items-center mt-4">
               <span className="text-white font-bold">TOTAL</span>
-              <span className="text-bs-jade text-xl font-mono">R$ {cartTotal.toFixed(2)}</span>
+              {/* Usa finalTotal em vez de cartTotal */}
+              <span className="text-bs-jade text-xl font-tech">R$ {finalTotal.toFixed(2)}</span>
             </div>
           </div>
-          <div className="mt-4 flex items-center justify-center gap-2 text-gray-600 text-xs font-mono">
+          <div className="mt-4 flex items-center justify-center gap-2 text-gray-600 text-xs font-tech">
             <Truck size={14} /> Envios via Carrier
           </div>
         </div>

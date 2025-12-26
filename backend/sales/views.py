@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Order
 from .serializers import OrderSerializer
-from .services import TrackingService
+from .services import TrackingService, MelhorEnvioService
 from django.shortcuts import get_object_or_404
 
 class OrderViewSet(viewsets.ModelViewSet):
@@ -71,3 +71,18 @@ def get_public_order_details(request, pk):
         "status": order.status,
         "created_at": order.created_at
     })
+
+class CalculateShippingView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        cep = request.data.get('cep')
+        items = request.data.get('items', [])
+        
+        if not cep:
+            return Response({"error": "CEP obrigatório"}, status=400)
+
+        # Chama o serviço do Melhor Envio (Sandbox)
+        options = MelhorEnvioService.calculate(cep, items)
+        
+        return Response(options)
