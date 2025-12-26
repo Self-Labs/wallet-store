@@ -60,6 +60,7 @@ const Checkout = () => {
   const [cpfError, setCpfError] = useState(false); 
   const [shippingOptions, setShippingOptions] = useState([]);
   const [selectedShipping, setSelectedShipping] = useState(null);
+  const [formError, setFormError] = useState('');
   
   // Cálculo do Total Final com Frete
   const finalTotal = cartTotal + (selectedShipping ? selectedShipping.price : 0);
@@ -88,6 +89,7 @@ const Checkout = () => {
     const cep = e.target.value.replace(/\D/g, '');
     if (cep.length === 8) {
       setLoadingCep(true);
+      setFormError(''); // Limpa erro ao buscar CEP
       try {
         // 1. Busca Endereço (ViaCEP)
         const { data } = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
@@ -111,11 +113,17 @@ const Checkout = () => {
                 price: item.preco_venda 
             }))
         };
-        const shippingRes = await api.post('/sales/public/frete/calcular/', shippingPayload);
-        setShippingOptions(shippingRes.data);
+        const shippingRes = await api.post('/public/frete/calcular/', shippingPayload);
+        
+        if (shippingRes.data.length === 0) {
+           setFormError('NENHUMA OPÇÃO DE FRETE ENCONTRADA PARA ESTE CEP.');
+        } else {
+           setShippingOptions(shippingRes.data);
+        }
 
       } catch (error) {
         console.error("Erro CEP/Frete", error);
+        setFormError('ERRO AO CALCULAR FRETE. VERIFIQUE O CEP.');
       } finally {
         setLoadingCep(false);
       }
@@ -131,6 +139,7 @@ const Checkout = () => {
     if (name === 'phone') value = maskPhone(value);
     if (name === 'cep') value = maskCEP(value);
     setFormData({ ...formData, [name]: value });
+    setFormError(''); // Limpa erro ao digitar
   };
 
   // Valida CPF ao sair do campo
@@ -146,13 +155,15 @@ const Checkout = () => {
     // Bloqueia envio se CPF for inválido
     if (!validateCPF(formData.cpf)) {
       setCpfError(true);
-      alert("CPF Inválido. Verifique os números.");
+      setFormError("CPF INVÁLIDO. VERIFIQUE OS NÚMEROS.");
+      window.scrollTo(0, 0);
       return;
     }
 
     // Validação de Frete Obrigatório
     if (!selectedShipping) {
-        alert("Por favor, selecione uma opção de frete.");
+        setFormError("POR FAVOR, SELECIONE UMA OPÇÃO DE FRETE.");
+        window.scrollTo(0, 0);
         return;
     }
 
@@ -183,13 +194,13 @@ const Checkout = () => {
       const response = await api.post('/pedidos/', payload);
       // SUCESSO: Limpa carrinho e redireciona para a página de sucesso com o ID
       clearCart(); 
-      // alert(`PEDIDO #${response.data.id} CONFIRMADO!\n\nGuarde este ID para rastreio.`);
       navigate(`/sucesso/${response.data.id}`);
     } catch (error) {
       console.error(error);
       // Se o erro vier do backend com detalhes, mostre, senão mensagem genérica
       const msg = error.response?.data?.error || "ERRO AO PROCESSAR PEDIDO. Tente novamente.";
-      alert(msg);
+      setFormError(msg.toUpperCase());
+      window.scrollTo(0, 0);
     } finally {
       setLoading(false);
     }
@@ -205,6 +216,15 @@ const Checkout = () => {
       <h1 className="text-3xl font-tech text-white mb-8 flex items-center gap-3">
         <Lock className="text-bs-jade" /> CHECKOUT SEGURO
       </h1>
+      
+      {/* MENSAGEM DE ERRO */}
+      {formError && (
+        <div className="mb-6 p-4 bg-red-900/20 border border-red-500/50 text-red-500 flex items-center gap-3 animate-pulse">
+          <ShieldAlert size={24} />
+          <span className="font-tech font-bold text-sm">{formError}</span>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
 
         {/* COLUNA 1: Formulário */}
@@ -382,7 +402,7 @@ const Checkout = () => {
                          {shippingOptions.map((opt, idx) => (
                              <div 
                                  key={idx}
-                                 onClick={() => setSelectedShipping(opt)}
+                                 onClick={() => { setSelectedShipping(opt); setFormError(''); }}
                                  className={`cursor-pointer p-4 border rounded-sm flex flex-col justify-between transition-all hover:border-bs-jade ${selectedShipping?.name === opt.name ? 'border-bs-jade bg-bs-jade/10' : 'border-bs-border bg-black'}`}
                              >
                                  <div className="flex justify-between items-center font-tech mb-2">
