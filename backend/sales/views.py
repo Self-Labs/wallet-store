@@ -7,6 +7,10 @@ from .models import Order
 from .serializers import OrderSerializer
 from .services import TrackingService, MelhorEnvioService
 from django.shortcuts import get_object_or_404
+import requests
+import logging
+
+logger = logging.getLogger(__name__)
 
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
@@ -27,11 +31,18 @@ class PublicTrackingView(APIView):
         # 1. Tenta achar no nosso banco local
         try:
             order = Order.objects.filter(tracking_code=code).first()
-        except:
+        except Exception as e:
+            logger.error(f"Erro ao buscar pedido no banco: {e}")
             order = None
 
         # 2. Consulta o Serviço (Melhor Envio) para status atualizado
-        status_atual = TrackingService.check_status(code)
+        try:
+            status_atual = TrackingService.check_status(code)
+        except requests.exceptions.RequestException:
+            # Se falhar conexão com a API externa e não tivermos pedido local, retornamos 503
+            if not order:
+                return Response({"error": "Serviço de rastreio indisponível temporariamente."}, status=503)
+            status_atual = None
 
         if not status_atual and not order:
             return Response({"error": "Rastreio não encontrado"}, status=404)
@@ -82,7 +93,18 @@ class CalculateShippingView(APIView):
         if not cep:
             return Response({"error": "CEP obrigatório"}, status=400)
 
-        # Chama o serviço do Melhor Envio (Sandbox)
-        options = MelhorEnvioService.calculate(cep, items)
+        try:
+            # Chama o serviço do Melhor Envio (Sandbox)
+            options = MelhorEnvioService.calculate(cep, items)
+            return Response(options)
+
+        except ValueError as e:
+            return Response({"error": str(e)}, status=400)
         
-        return Response(options)
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Erro externo cálculo frete: {e}")
+            return Response({"error": "Serviço de cálculo de frete indisponível."}, status=503)
+
+        except Exception as e:
+            logger.error(f"Erro interno cálculo frete: {e}")
+            return Response({"error": "Erro ao calcular frete."}, status=500)
