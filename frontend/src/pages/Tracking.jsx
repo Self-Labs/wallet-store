@@ -20,10 +20,14 @@ const Tracking = () => {
       if (response.ok) {
         setResult(data);
       } else {
-        setError(data.error || 'ID not found in the mempool.');
+         if (response.status === 503) {
+             setError('Service unavailable. Please try again later.');
+         } else {
+             setError(data.error || 'ID not found in the mempool.');
+         }
       }
     } catch (err) {
-      setError('Connection failed.');
+      setError('Connection failed. Please check your network.');
     } finally {
       setLoading(false);
     }

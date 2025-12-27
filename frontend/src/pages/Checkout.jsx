@@ -123,7 +123,17 @@ const Checkout = () => {
 
       } catch (error) {
         console.error("Erro CEP/Frete", error);
-        setFormError("ERRO AO CALCULAR FRETE. VERIFIQUE O CEP.");
+        if (error.response) {
+            if (error.response.status === 400) {
+                 setFormError(error.response.data.error || "DADOS INVÁLIDOS PARA CÁLCULO DE FRETE.");
+            } else if (error.response.status === 503) {
+                 setFormError("SERVIÇO DE FRETE INDISPONÍVEL. TENTE NOVAMENTE MAIS TARDE.");
+            } else {
+                 setFormError("ERRO AO CALCULAR FRETE. TENTE NOVAMENTE.");
+            }
+        } else {
+             setFormError("ERRO DE CONEXÃO. VERIFIQUE SUA INTERNET.");
+        }
       } finally {
         setLoadingCep(false);
       }
