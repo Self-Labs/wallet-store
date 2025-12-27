@@ -135,7 +135,7 @@ class MelhorEnvioService:
                 "receipt": False,
                 "own_hand": False
             },
-            "services": "1,2" # 1=SEDEX, 2=PAC
+            # "services": "1,2" # 1=SEDEX, 2=PAC
         }
 
         try:
