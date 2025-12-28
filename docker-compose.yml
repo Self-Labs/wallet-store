@@ -20,9 +20,6 @@ services:
     container_name: store-api
     build: ./backend
     restart: unless-stopped
-    volumes:
-      - ./backend:/app
-      - ./backend/staticfiles:/app/staticfiles
     command: sh -c "/entrypoint.sh && gunicorn setup.wsgi:application --bind 0.0.0.0:8000 --workers 3 --threads 2"
     labels:
       - "com.centurylinklabs.watchtower.enable=false"
