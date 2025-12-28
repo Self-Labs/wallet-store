@@ -1,5 +1,7 @@
-from django.db import models
+import uuid
 from core.models import Produto
+from django.db import models
+from django.utils import timezone
 
 class Order(models.Model):
     STATUS_CHOICES = [
@@ -30,6 +32,8 @@ class Order(models.Model):
     shipping_method = models.CharField("Método de Envio", max_length=50, blank=True, null=True)
     shipping_cost = models.DecimalField("Custo de Frete", max_digits=10, decimal_places=2, default=0.00)
 
+    delivered_at = models.DateTimeField("Data de Entrega", null=True, blank=True)
+
     class Meta:
         verbose_name = "Pedido"
         verbose_name_plural = "Pedidos"
@@ -56,3 +60,42 @@ class OrderItem(models.Model):
     @property
     def total(self):
         return self.quantity * self.price_at_purchase
+
+class Transaction(models.Model):
+    METHOD_CHOICES = [
+        ('PIX', 'Pix (BRL)'),
+        ('BTC', 'Bitcoin (Mainnet)'),
+        ('LBTC', 'Liquid Bitcoin (Sidechain)'),
+        ('DEPIX', 'DePix (Liquid Token)'),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='transactions')
+    payment_method = models.CharField(max_length=10, choices=METHOD_CHOICES)
+    
+    # Valores
+    amount_brl = models.DecimalField(max_digits=10, decimal_places=2) # Valor original
+    amount_crypto = models.DecimalField(max_digits=18, decimal_places=8, null=True, blank=True) # Valor convertido
+    exchange_rate = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True) # Cotação usada
+    
+    # Dados de Pagamento
+    wallet_address = models.CharField(max_length=255, null=True, blank=True) # Endereço Crypto ou Payload Pix
+    qr_code_data = models.TextField(null=True, blank=True) # Base64 ou texto cru para gerar QR
+    
+    # Controle
+    status = models.CharField(max_length=20, default='PENDING') # PENDING, CONFIRMED, EXPIRED
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+
+    def save(self, *args, **kwargs):
+        if not self.expires_at:
+            # Define 15 minutos de validade por padrão
+            self.expires_at = timezone.now() + timezone.timedelta(minutes=15)
+        super().save(*args, **kwargs)
+
+    @property
+    def is_expired(self):
+        return timezone.now() > self.expires_at
+
+    def __str__(self):
+        return f"{self.payment_method} - {self.status} (Order {self.order.id})"

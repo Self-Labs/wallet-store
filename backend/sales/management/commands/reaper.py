@@ -1,83 +1,98 @@
 from django.core.management.base import BaseCommand
+from django.utils import timezone
+from datetime import timedelta
 from sales.models import Order
-from sales.services import TrackingService
+from sales.services import TrackingService 
+from sales.emails import EmailService 
 import time
 import logging
 
-# Configuração de Log para auditoria (aparece no terminal)
 logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
-    help = 'Executa o Protocolo Ceifador: Verifica entregas e destrói dados sensíveis.'
+    help = 'Protocolo Ceifador: Atualiza rastreios e destrói dados após 72h da entrega.'
 
     def handle(self, *args, **options):
-        self.stdout.write(self.style.MIGRATE_HEADING("💀 INICIANDO PROTOCOLO CEIFADOR..."))
+        self.stdout.write(self.style.MIGRATE_HEADING("💀 INICIANDO PROTOCOLO CEIFADOR (DELAY 72H)..."))
 
-        # 1. Busca apenas pedidos que foram ENVIADOS (SHIPPED)
-        orders_in_transit = Order.objects.filter(status='SHIPPED')
+        # ==============================================================================
+        # FASE 1: ATUALIZAÇÃO (Monitorar quem está em trânsito)
+        # ==============================================================================
+        orders_in_transit = Order.objects.filter(status__in=['SHIPPED', 'PENDING'])
         
-        count = orders_in_transit.count()
-        if count == 0:
-            self.stdout.write(self.style.WARNING(" > Nenhum pedido em trânsito para verificar."))
-            return
-
-        self.stdout.write(f" > Monitorando {count} pedidos em trânsito.")
-
         for order in orders_in_transit:
             if not order.tracking_code:
-                self.stdout.write(self.style.ERROR(f" > Pedido #{order.id}: Sem código de rastreio. Pulando."))
                 continue
 
-            self.stdout.write(f" > Consultando rastro: {order.tracking_code} (Pedido #{order.id})...")
+            # Se já tem tracking, mas está como PENDING, assume que foi postado
+            if order.status == 'PENDING' and len(order.tracking_code) > 5:
+                 order.status = 'SHIPPED'
+                 order.save()
 
-            # 2. Consulta o Oráculo (Service de Rastreio)
-            new_status = TrackingService.check_status(order.tracking_code)
+            try:
+                # Consulta API
+                new_status = TrackingService.check_status(order.tracking_code)
 
-            if new_status == 'DELIVERED':
+                if new_status == 'DELIVERED':
+                    # CHEGOU AGORA!
+                    self.stdout.write(self.style.SUCCESS(f" > Pedido #{order.id} foi ENTREGUE."))
+                    order.status = 'DELIVERED'
+                    if not order.delivered_at:
+                        order.delivered_at = timezone.now() # Inicia contagem regressiva
+                    order.save()
+                
+                elif new_status and new_status != order.status:
+                    # Mudou status (ex: saiu para entrega), mas não finalizou
+                    order.status = new_status
+                    order.save()
+                
+                time.sleep(1) # Respeito à API
+            except Exception as e:
+                logger.error(f"Erro ao rastrear #{order.id}: {e}")
+
+        # ==============================================================================
+        # FASE 2: DESTRUIÇÃO (Verificar quem já cumpriu a quarentena de 72h)
+        # ==============================================================================
+        
+        # Define o limite: Agora menos 72 horas
+        limit_time = timezone.now() - timedelta(hours=72)
+        
+        # Busca pedidos Entregues ANTES desse limite e que ainda não foram anonimizados
+        targets = Order.objects.filter(
+            status='DELIVERED',
+            delivered_at__lte=limit_time 
+        ).exclude(email__startswith="deleted_") # Evita reprocessar os já destruídos
+
+        if targets.exists():
+            self.stdout.write(self.style.WARNING(f" > Encontrados {targets.count()} pedidos para destruição imediata."))
+            for order in targets:
                 self.process_destruction(order)
-            elif new_status and new_status != order.status:
-                # Se mudou de status mas não entregou (ex: PENDING -> SHIPPED na API), atualiza
-                order.status = new_status
-                order.save()
-                self.stdout.write(f" > Status atualizado para: {new_status}")
-            else:
-                self.stdout.write(" > Ainda em trânsito.")
+        else:
+            self.stdout.write(" > Nenhum pedido expirou o prazo de 72h ainda.")
 
-            # 3. Respeito à API (Rate Limiting)
-            # Pausa de 2 segundos entre consultas para não ser bloqueado pelo Melhor Envio
-            time.sleep(2)
-
-        self.stdout.write(self.style.SUCCESS("------------------------------------------------"))
-        self.stdout.write(self.style.SUCCESS("💀 PROTOCOLO FINALIZADO."))
+        self.stdout.write(self.style.SUCCESS("💀 CICLO FINALIZADO."))
 
     def process_destruction(self, order):
         """
-        Executa a limpeza dos dados PII (Personally Identifiable Information).
-        Mantém os dados financeiros e os produtos para contabilidade.
+        Executa a limpeza dos dados PII.
         """
         try:
-            self.stdout.write(self.style.SUCCESS(f" > ALVO CONFIRMADO: Pedido #{order.id} Entregue."))
-            
-            # --- Envia E-mail ANTES de destruir ---
-            self.stdout.write(" > Enviando e-mail de notificação...")
-            EmailService.send_data_destruction(order, order.email)
+            # 1. Notificação
+            try:
+                EmailService.send_data_destruction(order, order.email)
+            except Exception:
+                pass # Falha silenciosa no email não impede destruição
 
-            self.stdout.write(" > Executando destruição de dados...")
-
-            # Atualiza Status
-            order.status = 'DELIVERED'
-
-            # --- DADOS SENSÍVEIS (Sobrescrever com Hash/Lixo) ---
+            # 2. Destruição
             order.full_name = "ANONYMIZED USER"
-            order.email = "deleted@anon.store"
+            order.email = f"deleted_{order.id}@anon.store"
             order.cpf = "000.000.000-00"
             order.phone = "00000000000"
-            
-            # Removemos o endereço real, mantendo apenas UF/Cidade para estatísticas (opcional)
             order.address = "DATA DESTROYED // REAPER PROTOCOL EXECUTED"
-
+            order.tracking_code = "DESTROYED" 
             order.save()
-            self.stdout.write(self.style.SUCCESS(f" > Pedido #{order.id}: DADOS PESSOAIS ELIMINADOS COM SUCESSO."))
+
+            self.stdout.write(self.style.SUCCESS(f" > Pedido #{order.id}: DADOS PESSOAIS ELIMINADOS."))
             
         except Exception as e:
-            self.stdout.write(self.style.ERROR(f" > ERRO AO DESTRUIR DADOS DO PEDIDO #{order.id}: {e}"))
+            logger.critical(f"FALHA DESTRUIÇÃO #{order.id}: {e}")
