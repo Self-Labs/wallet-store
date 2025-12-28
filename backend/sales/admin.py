@@ -14,7 +14,12 @@ class OrderAdmin(admin.ModelAdmin):
     inlines = [OrderItemInline]
     readonly_fields = ['created_at']
 
+    # Carrega os itens junto com o pedido para evitar N+1 queries
+    def get_queryset(self, request):
+        return super().get_queryset(request).prefetch_related('items')
+
     def total_pedido(self, obj):
-        total = sum(item.total for item in obj.items.all())
-        return f"R$ {total}"
+        # A propriedade .total já existe no model, use-a.
+        # Converter para float/str para garantir exibição correta
+        return f"R$ {obj.total}"
     total_pedido.short_description = "Total"
