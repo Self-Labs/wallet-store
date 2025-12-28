@@ -190,12 +190,13 @@ const Checkout = () => {
       cpf: formData.cpf,
       phone: formData.phone,
       address: formattedAddress,
+      // 1. Correção: Mapeamento exato para o Serializer (product_id e price_at_purchase)
       items: cartItems.map(item => ({
         product_id: item.id,
         quantity: item.quantity,
         price_at_purchase: item.preco_venda
       })),
-      // Dados do frete (Opcional)
+      // 2. Correção: Envio dos dados de frete selecionados
       shipping_method: selectedShipping.name, 
       shipping_cost: selectedShipping.price
     };
@@ -206,10 +207,10 @@ const Checkout = () => {
       clearCart(); 
       navigate(`/sucesso/${response.data.id}`);
     } catch (error) {
-      console.error(error);
+      console.error("Erro no Pedido:", error);
       // Se o erro vier do backend com detalhes, mostre, senão mensagem genérica
       const msg = error.response?.data?.error || "ERRO AO PROCESSAR PEDIDO. Tente novamente.";
-      setFormError(msg.toUpperCase());
+      setFormError(typeof msg === 'string' ? msg.toUpperCase() : JSON.stringify(msg));
       window.scrollTo(0, 0);
     } finally {
       setLoading(false);
