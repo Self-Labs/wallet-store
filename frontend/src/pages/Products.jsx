@@ -60,7 +60,7 @@ const Products = () => {
                             {produto.nome}
                         </h3>
                         <p className="text-gray-500 text-xs font-tech mb-4 uppercase">
-                            SKU: GEN-{produto.id.toString().padStart(3, '0')}
+                            SKU: DIY-{produto.id.toString().padStart(3, '0')}
                         </p>
                     </div>
                 </Link>

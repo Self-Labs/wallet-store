@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404
 from .models import Order, Transaction
 from .serializers import OrderSerializer
 
-# Importando do __init__.py
+# Importando serviços
 from .services import (
     TrackingService, 
     MelhorEnvioService, 
@@ -32,7 +32,7 @@ class OrderViewSet(viewsets.ModelViewSet):
     # Define permissões específicas por ação
     def get_permissions(self):
         # Ações públicas que não exigem login
-        if self.action in ['start_payment', 'calculate_shipping', 'tracking', 'public_details']:
+        if self.action in ['create', 'start_payment', 'calculate_shipping', 'tracking', 'public_details']:
             return [AllowAny()]
         return super().get_permissions()
 
@@ -65,7 +65,7 @@ class OrderViewSet(viewsets.ModelViewSet):
                 
                 wallet_address = None
                 qr_code_data = None
-                
+
                 # B. Geração de Endereço / Payload
                 if method == 'BTC':
                     # Mainnet Native Segwit (zpub)
