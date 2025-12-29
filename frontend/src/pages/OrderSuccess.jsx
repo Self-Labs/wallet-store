@@ -81,7 +81,7 @@ const OrderSuccess = () => {
   if (!order) return <div className="min-h-screen bg-[#121212] text-white flex items-center justify-center font-tech">PEDIDO NÃO ENCONTRADO</div>;
 
   return (
-    <div className="min-h-screen bg-bs-black text-white font-tech py-8 px-4 relative">
+    <div className="max-w-7xl mx-auto px-4 py-8 animate-fade-in text-white font-tech">
       
       {/* NOTIFICAÇÃO FLUTUANTE (TOAST) */}
       {notification && (
@@ -266,7 +266,7 @@ const OrderSuccess = () => {
           </div>
         </div>
 
-        <div className="text-center mt-16 pt-8 border-t border-gray-900">
+        <div className="text-left mt-8">
             <Link to="/" className="text-gray-500 hover:text-bs-jade text-sm transition-colors">
                 ← Voltar para a Loja
             </Link>
