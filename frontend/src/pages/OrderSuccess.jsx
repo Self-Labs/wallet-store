@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
-import { CheckCircle, Copy, Clock, AlertTriangle, QrCode, Bitcoin, Zap } from 'lucide-react';
+import { CheckCircle, Copy, Clock, AlertTriangle, QrCode, Bitcoin, Zap, Info } from 'lucide-react';
 
 const api = axios.create({ baseURL: '/api' });
 
@@ -78,8 +78,8 @@ const OrderSuccess = () => {
   if (!order) return <div className="min-h-screen bg-black text-white flex items-center justify-center font-tech">PEDIDO NÃO ENCONTRADO</div>;
 
   return (
-    <div className="min-h-screen bg-black text-white font-tech py-12 px-4">
-      <div className="max-w-3xl mx-auto">
+    <div className="min-h-screen bg-black text-white font-tech py-8 px-4">
+      <div className="max-w-4xl mx-auto">
         
         {/* CABEÇALHO */}
         <div className="text-center mb-12 animate-fade-in">
@@ -87,26 +87,18 @@ const OrderSuccess = () => {
           <h1 className="text-4xl font-bold mb-2">PEDIDO CONFIRMADO!</h1>
           <p className="text-gray-400">ID do Pedido: <span className="text-white font-bold">#{order.id}</span></p>
           <div className="mt-4 p-4 border border-bs-border inline-block rounded bg-bs-card">
-            <span className="text-gray-400 text-sm">TOTAL A PAGAR</span>
+            <span className="text-gray-400 text-sm">TOTAL DO PEDIDO</span>
             <div className="text-3xl text-bs-jade font-bold">R$ {order.total.toFixed(2)}</div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           
           {/* SELEÇÃO DE PAGAMENTO */}
           <div className="space-y-4">
             <h3 className="text-xl font-bold border-b border-gray-800 pb-2 mb-4">ESCOLHA O MÉTODO</h3>
             
-            <button 
-              onClick={() => handlePayment('PIX')}
-              disabled={loadingPay}
-              className={`w-full p-4 border rounded flex items-center justify-between transition-all ${selectedMethod === 'PIX' ? 'border-bs-jade bg-bs-jade/10 text-bs-jade' : 'border-gray-700 hover:border-gray-500'}`}
-            >
-              <div className="flex items-center gap-3"><QrCode /> <span>PIX (Instantâneo)</span></div>
-              {loadingPay && selectedMethod === 'PIX' && <Zap className="animate-spin" />}
-            </button>
-
+            {/* BITCOIN */}
             <button 
               onClick={() => handlePayment('BTC')}
               disabled={loadingPay}
@@ -116,18 +108,46 @@ const OrderSuccess = () => {
               {loadingPay && selectedMethod === 'BTC' && <Zap className="animate-spin" />}
             </button>
 
+            {/* LIQUID BTC */}
             <button 
               onClick={() => handlePayment('LBTC')}
               disabled={loadingPay}
               className={`w-full p-4 border rounded flex items-center justify-between transition-all ${selectedMethod === 'LBTC' ? 'border-blue-400 bg-blue-400/10 text-blue-400' : 'border-gray-700 hover:border-gray-500'}`}
             >
-              <div className="flex items-center gap-3"><Zap /> <span>LIQUID BTC (Rápido/Privado)</span></div>
+              <div className="flex items-center gap-3"><Zap /> <span>LIQUID BTC (Privado)</span></div>
               {loadingPay && selectedMethod === 'LBTC' && <Zap className="animate-spin" />}
             </button>
+
+            {/* DEPIX */}
+            <button 
+              onClick={() => handlePayment('DEPIX')}
+              disabled={loadingPay}
+              className={`w-full p-4 border rounded flex items-center justify-between transition-all ${selectedMethod === 'DEPIX' ? 'border-green-400 bg-green-400/10 text-green-400' : 'border-gray-700 hover:border-gray-500'}`}
+            >
+              <div className="flex items-center gap-3"><QrCode /> <span>DePix (Liquid Stable)</span></div>
+              <span className="text-xs bg-gray-800 text-gray-300 px-2 py-1 rounded">Sem Taxas</span>
+            </button>
+
+            {/* PIX */}
+            <button 
+              onClick={() => handlePayment('PIX')}
+              disabled={loadingPay}
+              className={`w-full p-4 border rounded flex items-center justify-between transition-all ${selectedMethod === 'PIX' ? 'border-bs-jade bg-bs-jade/10 text-bs-jade' : 'border-gray-700 hover:border-gray-500'}`}
+            >
+              <div className="flex items-center gap-3"><QrCode /> <span>PIX (Instantâneo)</span></div>
+              <span className="text-xs bg-red-900 text-red-200 px-2 py-1 rounded">+15% Taxas</span>
+            </button>
+            
+            {selectedMethod === 'PIX' && (
+              <div className="text-xs text-gray-400 bg-gray-900 p-3 rounded border-l-2 border-red-500 flex items-start gap-2">
+                <Info size={16} className="text-red-500 shrink-0" />
+                <span>Para cobrir custos de conformidade fiscal e impostos governamentais, aplicamos uma taxa de 15% sobre pagamentos em Real (Fiat).</span>
+              </div>
+            )}
           </div>
 
           {/* ÁREA DE PAGAMENTO (QR CODE / DADOS) */}
-          <div className="bg-bs-card border border-bs-border p-6 rounded min-h-[300px] flex flex-col items-center justify-center relative">
+          <div className="bg-bs-card border border-bs-border p-6 rounded min-h-[350px] flex flex-col items-center justify-center relative">
             
             {!paymentData && !loadingPay && (
               <p className="text-gray-500 text-center">Selecione um método ao lado para gerar o pagamento.</p>
@@ -149,22 +169,34 @@ const OrderSuccess = () => {
                 </div>
 
                 <div className="mb-6">
-                  <p className="text-sm text-gray-400 mb-1">Valor em {paymentData.method}</p>
-                  <p className="text-2xl font-bold text-white">
-                    {paymentData.method === 'PIX' ? `R$ ${paymentData.amount_brl}` : paymentData.amount_crypto}
-                  </p>
-                  {paymentData.rate && <p className="text-xs text-gray-500">Cotação: 1 {paymentData.method} = R$ {paymentData.rate}</p>}
+                  <p className="text-sm text-gray-400 mb-1">Valor Total ({paymentData.method})</p>
+                  
+                  {/* Se for PIX, mostra o valor com a taxa. Se for Crypto, mostra a quantia. */}
+                  <div className="flex items-center justify-center gap-2">
+                    <p className="text-3xl font-bold text-white">
+                        {paymentData.method === 'PIX' ? `R$ ${paymentData.amount_brl}` : paymentData.amount_crypto}
+                    </p>
+                    {paymentData.method === 'PIX' && (
+                        <span className="text-xs bg-red-600 text-white px-2 py-1 rounded">+15% incluso</span>
+                    )}
+                  </div>
+
+                  {/* Mostra cotação se for Crypto */}
+                  {paymentData.rate && paymentData.method !== 'PIX' && (
+                      <p className="text-xs text-gray-500 mt-1">Cotação: 1 {paymentData.method} = R$ {paymentData.rate}</p>
+                  )}
                 </div>
 
-                {/* Exibição QR Code */}
+                {/* Exibição QR Code (Para Pix e BTC) */}
                 {paymentData.qr_code && (paymentData.method === 'PIX' || paymentData.method === 'BTC') && (
                    <div className="bg-white p-2 inline-block rounded mb-4">
-                      {/* Nota: Para BTC/Pix real, usar biblioteca qrcode.react. Aqui simulo imagem ou texto */}
                       {paymentData.method === 'PIX' ? (
                           <img src={`data:image/png;base64,${paymentData.qr_code_base64 || ''}`} alt="QR Pix" className="w-48 h-48 object-contain" onError={(e) => e.target.style.display='none'} />
                       ) : (
-                          // Para BTC, idealmente usar lib de QR. Se não tiver, exibe só o endereço
-                          <div className="w-48 h-48 bg-gray-200 flex items-center justify-center text-black text-xs">QR Code Component</div>
+                          // Placeholder para BTC (Idealmente usar lib qrcode.react)
+                          <div className="w-48 h-48 bg-gray-200 flex items-center justify-center text-black text-xs font-bold p-2 text-center break-words">
+                              Use o endereço abaixo
+                          </div>
                       )}
                    </div>
                 )}

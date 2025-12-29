@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from django.db import transaction
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
+from decimal import Decimal
 
 # Models e Serializers
 from .models import Order, Transaction
@@ -37,17 +38,17 @@ class OrderViewSet(viewsets.ModelViewSet):
         return super().get_permissions()
 
     # ============================================================================
-    # 1. MOTOR DE PAGAMENTOS (PIX, BTC, LBTC)
+    # 1. MOTOR DE PAGAMENTOS (BTC, LBTC, DEPIX, PIX)
     # ============================================================================
     @action(detail=True, methods=['post'], url_path='start-payment')
     def start_payment(self, request, pk=None):
         order = self.get_object()
-        method = request.data.get('method') # Ex: 'PIX', 'BTC', 'LBTC'
+        method = request.data.get('method') 
         
         if not method:
             return Response({"error": "Método de pagamento obrigatório"}, status=400)
 
-        # 1. Verifica se já existe transação pendente válida (Cache 15 min)
+        # 1. Verifica cache de transação (15 min)
         active_tx = order.transactions.filter(
             payment_method=method, 
             status='PENDING',
@@ -57,11 +58,21 @@ class OrderViewSet(viewsets.ModelViewSet):
         if active_tx:
             return Response(self._serialize_transaction(active_tx))
 
-        # 2. Gera nova transação
+        # 2. Lógica de Valor (Taxa do Pix)
+        # O valor base é o total do pedido.
+        transaction_amount_brl = order.total
+
+        # Se for PIX, aplica sobretaxa de 15% (Custos Governamentais)
+        if method == 'PIX':
+            transaction_amount_brl = transaction_amount_brl * Decimal('1.15')
+            # Arredonda para 2 casas decimais
+            transaction_amount_brl = transaction_amount_brl.quantize(Decimal('0.01'))
+
+        # 3. Gera nova transação
         try:
             with transaction.atomic():
                 # A. Cotação
-                amount_crypto, rate = PriceOracle.convert_brl_to_crypto(order.total, method)
+                amount_crypto, rate = PriceOracle.convert_brl_to_crypto(transaction_amount_brl, method)
                 
                 wallet_address = None
                 qr_code_data = None
@@ -77,22 +88,23 @@ class OrderViewSet(viewsets.ModelViewSet):
                     wallet_address = CryptoService.generate_address('LBTC', order.id)
                     qr_code_data = wallet_address 
                 
-                elif method == 'PIX':
-                    # Atlas DAO API
-                    pix_data = AtlasPixService.create_pix_charge(order, order.total)
-                    qr_code_data = pix_data['qr_code']
-                    wallet_address = pix_data['txid'] # Salva ID da transação externa
-                
                 elif method == 'DEPIX':
-                    # Placeholder para DePix (Token na Liquid)
+                    # DePix usa a mesma infraestrutura da Liquid (LBTC)
+                    # O endereço é gerado da mesma xpub Liquid
                     wallet_address = CryptoService.generate_address('LBTC', order.id)
                     qr_code_data = wallet_address
+                
+                elif method == 'PIX':
+                    # Cria cobrança na Atlas com o valor acrescido (15%)
+                    pix_data = AtlasPixService.create_pix_charge(order, transaction_amount_brl)
+                    qr_code_data = pix_data['qr_code']
+                    wallet_address = pix_data['txid']
 
                 # C. Salva no Banco
                 tx = Transaction.objects.create(
                     order=order,
                     payment_method=method,
-                    amount_brl=order.total,
+                    amount_brl=transaction_amount_brl,
                     amount_crypto=amount_crypto,
                     exchange_rate=rate,
                     wallet_address=wallet_address,
@@ -105,7 +117,7 @@ class OrderViewSet(viewsets.ModelViewSet):
             # Erros de validação (ex: API Key faltando)
             return Response({"error": str(e)}, status=400)
         except Exception as e:
-            logger.error(f"Erro crítico no pagamento: {e}")
+            logger.error(f"Erro crítico no pagamento ({method}): {e}")
             return Response({"error": "Erro ao processar pagamento. Tente novamente."}, status=500)
 
     # ============================================================================
