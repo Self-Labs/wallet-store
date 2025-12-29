@@ -1,207 +1,204 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
-import { CheckCircle, Copy, ShieldCheck, ArrowRight, RefreshCw, QrCode, Wallet, Bitcoin } from 'lucide-react';
+import { CheckCircle, Copy, Clock, AlertTriangle, QrCode, Bitcoin, Zap } from 'lucide-react';
 
-// Instância da API do seu Backend
 const api = axios.create({ baseURL: '/api' });
 
 const OrderSuccess = () => {
   const { id } = useParams();
   const [order, setOrder] = useState(null);
-  const [btcPrice, setBtcPrice] = useState(0);
-  const [loadingPrice, setLoadingPrice] = useState(true);
-  const [activeTab, setActiveTab] = useState('pix'); // pix, depix, btc, lbtc
-  const [atlasQrCode, setAtlasQrCode] = useState(null); // Para armazenar o QR Code da Atlas
+  const [loading, setLoading] = useState(true);
+  const [paymentData, setPaymentData] = useState(null); // Dados da transação (QR code, address)
+  const [selectedMethod, setSelectedMethod] = useState(null);
+  const [loadingPay, setLoadingPay] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(900); // 15 minutos em segundos
 
-  // Addresses
-  const WALLETS = {
-    depix: "lq1qq0a4y54p6s2eq4x7amyjj4wqv29fhfc43c4fsq6jfp88qjc390gqastyxnld54jcrwqyya02m5ahcahnfsas5c9vjkmn8g7lr",
-    btc: "bc1q74lxm6tpam38qmuyyy4en23fuz5726cda6up78",
-    lbtc: "lq1qq0a4y54p6s2eq4x7amyjj4wqv29fhfc43c4fsq6jfp88qjc390gqastyxnld54jcrwqyya02m5ahcahnfsas5c9vjkmn8g7lr"
-  };
-
-  // 1. Busca dados do Pedido no Backend
+  // 1. Busca dados básicos do pedido
   useEffect(() => {
-    // Usando a rota 'public/pedido' definida no urls.py, não a rota protegida 'pedidos'
-    api.get(`/sales/public/pedido/${id}/`) // Ajuste a rota conforme seu backend
-      .then(res => setOrder(res.data))
-      .catch(err => console.error("Erro ao buscar pedido:", err));
+    const fetchOrder = async () => {
+      try {
+        const { data } = await api.get(`/public/pedido/${id}/`);
+        setOrder(data);
+      } catch (error) {
+        console.error("Erro ao buscar pedido:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchOrder();
   }, [id]);
 
-  // 2. Busca Preço Binance + Spread 1%
-  const fetchBinancePrice = async () => {
-    setLoadingPrice(true);
+  // 2. Timer de 15 minutos (Regressiva)
+  useEffect(() => {
+    if (paymentData && timeLeft > 0) {
+      const timer = setInterval(() => setTimeLeft((t) => t - 1), 1000);
+      return () => clearInterval(timer);
+    }
+  }, [paymentData, timeLeft]);
+
+  // 3. Inicia o Pagamento (Gera QR/Endereço)
+  const handlePayment = async (method) => {
+    setSelectedMethod(method);
+    setLoadingPay(true);
+    setPaymentData(null); // Limpa anterior
+
     try {
-      // API pública da Binance
-      const res = await axios.get('https://api.binance.com/api/v3/ticker/price?symbol=BTCBRL');
-      const rawPrice = parseFloat(res.data.price);
-      setBtcPrice(rawPrice * 1.01); // Aplica spread de 1%
+      // Chama o endpoint start-payment que criamos no backend
+      const { data } = await api.post(`/public/pedido/${id}/pagar/`, { method });
+      setPaymentData(data);
+      
+      // Ajusta o timer baseado no expires_at do backend
+      if (data.seconds_remaining) {
+        setTimeLeft(data.seconds_remaining);
+      }
     } catch (error) {
-      console.error("Erro Binance:", error);
+      console.error("Erro ao gerar pagamento:", error);
+      alert("Erro ao gerar pagamento. Tente novamente.");
     } finally {
-      setLoadingPrice(false);
+      setLoadingPay(false);
     }
   };
 
-  // Atualiza preço ao carregar e a cada 15 min (900000 ms)
-  useEffect(() => {
-    fetchBinancePrice();
-    const interval = setInterval(fetchBinancePrice, 15 * 60 * 1000); 
-    return () => clearInterval(interval);
-  }, []);
+  // Formata segundos em MM:SS
+  const formatTime = (seconds) => {
+    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const s = (seconds % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  };
 
-  // 3. Simulação API Pix
-  useEffect(() => {
-    if (activeTab === 'pix' && order && !atlasQrCode) {
-      // TODO: AQUI ENTRA A CHAMADA REAL DA ATLAS
-      // Exemplo:
-      // axios.post('https://api.atlasdao.com/pix/generate', { amount: order.total, webhook: ... })
-      // .then(res => setAtlasQrCode(res.data.qrcode_text))
-
-      // Mock temporário para você ver funcionando:
-      setAtlasQrCode(`00020126580014BR.GOV.BCB.PIX0114+551199999999520400005303986540${order.total}5802BR5913WALLET STORE6008BRASILIA62070503***6304`);
-    }
-  }, [activeTab, order]);
-
-  // Helpers
+  // Copiar para área de transferência
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
-    alert('Copiado!');
+    alert("Copiado!");
   };
 
-  const calculateBtcAmount = () => {
-    if (!order || !btcPrice) return "0.00000000";
-    return (parseFloat(order.total) / btcPrice).toFixed(8);
-  };
+  if (loading) return <div className="min-h-screen bg-black text-white flex items-center justify-center font-tech">CARREGANDO...</div>;
 
-  if (!order) return <div className="text-center py-20 text-bs-jade font-tech animate-pulse">CARREGANDO PEDIDO...</div>;
-
-  const btcAmount = calculateBtcAmount();
-
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case 'pix':
-        return (
-          <div className="text-center animate-fade-in">
-            <div className="bg-white p-2 inline-block mb-4 border-2 border-bs-jade">
-              {/* Aqui você usaria uma lib como 'qrcode.react' para renderizar o QR Code visualmente */}
-              <QrCode size={150} className="text-black" />
-            </div>
-            <p className="text-gray-500 font-tech text-[10px] uppercase mb-2">Pix Copy & Paste</p>
-            <div className="bg-black border border-bs-border p-3 flex items-center gap-2">
-              <code className="text-bs-jade font-tech text-[10px] truncate flex-grow text-left opacity-80">
-                {atlasQrCode || "Gerando Pix..."}
-              </code>
-              <button
-                onClick={() => copyToClipboard(atlasQrCode)}
-                className="text-gray-500 hover:text-white"
-              >
-                <Copy size={16}/>
-              </button>
-            </div>
-          </div>
-        );
-      case 'depix':
-        return (
-          <div className="text-left animate-fade-in">
-            <div className="mb-4 p-4 bg-blue-900/10 border border-blue-500/30 text-blue-400 font-tech text-xs">
-              <strong>Liquid Network</strong><br/>
-              Envie tokens DePix (1:1 BRL).
-            </div>
-            <p className="text-gray-500 font-tech text-[10px] uppercase mb-1">Endereço Liquid</p>
-            <div className="bg-black border border-bs-border p-3 flex items-center gap-2 mb-4">
-              <code className="text-blue-400 font-tech text-xs truncate flex-grow">{WALLETS.depix}</code>
-              <button
-                onClick={() => copyToClipboard(WALLETS.depix)}
-                className="text-gray-500 hover:text-white"
-              >
-                <Copy size={16}/>
-              </button>
-            </div>
-            <div className="text-right">
-              <p className="text-gray-500 font-tech text-[10px] uppercase">Valor Exato</p>
-              <div className="text-2xl font-tech text-white">{order.total} DePix</div>
-            </div>
-          </div>
-        );
-      case 'btc':
-      case 'lbtc':
-        const isLiquid = activeTab === 'lbtc';
-        const wallet = isLiquid ? WALLETS.lbtc : WALLETS.btc;
-        const color = isLiquid ? 'text-blue-300' : 'text-[#F7931A]';
-        return (
-          <div className="animate-fade-in text-left">
-            <div className={`mb-4 p-4 ${isLiquid ? 'bg-blue-900/10 border-blue-500/30' : 'bg-orange-900/10 border-orange-500/30'} font-tech text-xs text-gray-300`}>
-              <strong>{isLiquid ? 'Liquid Network' : 'Bitcoin Mainnet'}</strong><br/>
-              1 BTC = R$ {btcPrice.toLocaleString('pt-BR', {minimumFractionDigits: 2})}
-            </div>
-            <p className="text-gray-500 font-tech text-[10px] uppercase mb-1">
-              Endereço de Destino
-            </p>
-            <div className="bg-black border border-bs-border p-3 flex items-center gap-2 mb-4">
-              <code className={`${color} font-tech text-xs truncate flex-grow`}>
-                {wallet}
-              </code>
-              <button
-                onClick={() => copyToClipboard(wallet)}
-                className="text-gray-500 hover:text-white"
-              >
-                <Copy size={16}/>
-              </button>
-            </div>
-
-            <div className="text-right border-t border-bs-border pt-2">
-              <p className="text-gray-500 font-tech text-[10px] uppercase">
-                Total a Enviar
-              </p>
-              <div className={`text-2xl font-tech ${color}`}>
-                {btcAmount} BTC
-              </div>
-            </div>
-          </div>
-        );
-      default: return null;
-    }
-  };
+  if (!order) return <div className="min-h-screen bg-black text-white flex items-center justify-center font-tech">PEDIDO NÃO ENCONTRADO</div>;
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-12 text-center animate-fade-in">
-      <div className="mb-6 flex justify-center">
-        <CheckCircle className="text-bs-jade w-16 h-16" />
-      </div>
-      <h1 className="text-3xl font-tech text-white mb-2">
-        ORDER <span className="text-bs-jade">CONFIRMED</span>
-      </h1>
-      <p className="text-gray-500 font-tech text-xs mb-8 uppercase tracking-widest">
-        ID: <span className="text-white font-bold">#{id}</span>
-      </p>
+    <div className="min-h-screen bg-black text-white font-tech py-12 px-4">
+      <div className="max-w-3xl mx-auto">
+        
+        {/* CABEÇALHO */}
+        <div className="text-center mb-12 animate-fade-in">
+          <CheckCircle className="w-20 h-20 text-bs-jade mx-auto mb-4" />
+          <h1 className="text-4xl font-bold mb-2">PEDIDO CONFIRMADO!</h1>
+          <p className="text-gray-400">ID do Pedido: <span className="text-white font-bold">#{order.id}</span></p>
+          <div className="mt-4 p-4 border border-bs-border inline-block rounded bg-bs-card">
+            <span className="text-gray-400 text-sm">TOTAL A PAGAR</span>
+            <div className="text-3xl text-bs-jade font-bold">R$ {order.total.toFixed(2)}</div>
+          </div>
+        </div>
 
-      <div className="bg-bs-card border border-bs-border">
-        <div className="flex border-b border-bs-border bg-black">
-          {['pix', 'depix', 'btc', 'lbtc'].map(tab => (
-            <button
-              key={tab} 
-              onClick={() => setActiveTab(tab)}
-              className={`flex-1 py-4 font-tech text-[10px] font-bold uppercase
-              ${activeTab === tab ? 'text-bs-jade border-b-2 border-bs-jade' : 'text-gray-600'}`}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          
+          {/* SELEÇÃO DE PAGAMENTO */}
+          <div className="space-y-4">
+            <h3 className="text-xl font-bold border-b border-gray-800 pb-2 mb-4">ESCOLHA O MÉTODO</h3>
+            
+            <button 
+              onClick={() => handlePayment('PIX')}
+              disabled={loadingPay}
+              className={`w-full p-4 border rounded flex items-center justify-between transition-all ${selectedMethod === 'PIX' ? 'border-bs-jade bg-bs-jade/10 text-bs-jade' : 'border-gray-700 hover:border-gray-500'}`}
             >
-              {tab}
+              <div className="flex items-center gap-3"><QrCode /> <span>PIX (Instantâneo)</span></div>
+              {loadingPay && selectedMethod === 'PIX' && <Zap className="animate-spin" />}
             </button>
-          ))}
-        </div>
-        <div className="p-8 min-h-[300px] flex flex-col justify-center">
-          {renderTabContent()}
-        </div>
-      </div>
 
-      <div className="mt-8 opacity-70 flex flex-col items-center gap-4">
-        <div className="inline-flex items-center gap-2 text-red-500 font-tech text-[10px] uppercase border border-red-900/30 bg-red-900/10 px-3 py-1">
-          <ShieldCheck size={12} /> Dados Criptografados
+            <button 
+              onClick={() => handlePayment('BTC')}
+              disabled={loadingPay}
+              className={`w-full p-4 border rounded flex items-center justify-between transition-all ${selectedMethod === 'BTC' ? 'border-orange-500 bg-orange-500/10 text-orange-500' : 'border-gray-700 hover:border-gray-500'}`}
+            >
+              <div className="flex items-center gap-3"><Bitcoin /> <span>BITCOIN (On-chain)</span></div>
+              {loadingPay && selectedMethod === 'BTC' && <Zap className="animate-spin" />}
+            </button>
+
+            <button 
+              onClick={() => handlePayment('LBTC')}
+              disabled={loadingPay}
+              className={`w-full p-4 border rounded flex items-center justify-between transition-all ${selectedMethod === 'LBTC' ? 'border-blue-400 bg-blue-400/10 text-blue-400' : 'border-gray-700 hover:border-gray-500'}`}
+            >
+              <div className="flex items-center gap-3"><Zap /> <span>LIQUID BTC (Rápido/Privado)</span></div>
+              {loadingPay && selectedMethod === 'LBTC' && <Zap className="animate-spin" />}
+            </button>
+          </div>
+
+          {/* ÁREA DE PAGAMENTO (QR CODE / DADOS) */}
+          <div className="bg-bs-card border border-bs-border p-6 rounded min-h-[300px] flex flex-col items-center justify-center relative">
+            
+            {!paymentData && !loadingPay && (
+              <p className="text-gray-500 text-center">Selecione um método ao lado para gerar o pagamento.</p>
+            )}
+
+            {loadingPay && (
+              <div className="text-center animate-pulse">
+                <Zap className="w-12 h-12 text-bs-jade mx-auto mb-4 animate-bounce" />
+                <p>Gerando endereço seguro...</p>
+              </div>
+            )}
+
+            {paymentData && !loadingPay && (
+              <div className="w-full animate-fade-in text-center">
+                
+                {/* Timer */}
+                <div className="absolute top-4 right-4 flex items-center gap-2 text-orange-500 text-sm font-bold bg-orange-900/20 px-3 py-1 rounded">
+                  <Clock size={16} /> {formatTime(timeLeft)}
+                </div>
+
+                <div className="mb-6">
+                  <p className="text-sm text-gray-400 mb-1">Valor em {paymentData.method}</p>
+                  <p className="text-2xl font-bold text-white">
+                    {paymentData.method === 'PIX' ? `R$ ${paymentData.amount_brl}` : paymentData.amount_crypto}
+                  </p>
+                  {paymentData.rate && <p className="text-xs text-gray-500">Cotação: 1 {paymentData.method} = R$ {paymentData.rate}</p>}
+                </div>
+
+                {/* Exibição QR Code */}
+                {paymentData.qr_code && (paymentData.method === 'PIX' || paymentData.method === 'BTC') && (
+                   <div className="bg-white p-2 inline-block rounded mb-4">
+                      {/* Nota: Para BTC/Pix real, usar biblioteca qrcode.react. Aqui simulo imagem ou texto */}
+                      {paymentData.method === 'PIX' ? (
+                          <img src={`data:image/png;base64,${paymentData.qr_code_base64 || ''}`} alt="QR Pix" className="w-48 h-48 object-contain" onError={(e) => e.target.style.display='none'} />
+                      ) : (
+                          // Para BTC, idealmente usar lib de QR. Se não tiver, exibe só o endereço
+                          <div className="w-48 h-48 bg-gray-200 flex items-center justify-center text-black text-xs">QR Code Component</div>
+                      )}
+                   </div>
+                )}
+
+                {/* Endereço / Copia e Cola */}
+                <div className="text-left w-full bg-black border border-gray-700 p-3 rounded mb-4 relative group">
+                  <p className="text-xs text-gray-500 mb-1 uppercase">
+                    {paymentData.method === 'PIX' ? 'Código Copia e Cola' : 'Endereço da Carteira'}
+                  </p>
+                  <p className="text-xs text-bs-jade break-all font-tech pr-8">
+                    {paymentData.method === 'PIX' ? paymentData.qr_code : paymentData.address}
+                  </p>
+                  <button 
+                    onClick={() => copyToClipboard(paymentData.method === 'PIX' ? paymentData.qr_code : paymentData.address)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-2 hover:text-white text-gray-500"
+                  >
+                    <Copy size={16} />
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-center gap-2 text-xs text-yellow-500 bg-yellow-900/10 p-2 rounded border border-yellow-900/30">
+                  <AlertTriangle size={16} />
+                  <span>Envie o valor exato. O pagamento expira em 15 minutos.</span>
+                </div>
+
+              </div>
+            )}
+          </div>
         </div>
-        <Link to="/" className="text-bs-jade hover:text-white font-tech text-sm uppercase flex items-center gap-2">
-          Voltar à Loja <ArrowRight size={14} />
-        </Link>
+
+        <div className="text-center mt-12">
+            <Link to="/" className="text-bs-jade hover:underline text-sm">Voltar para a Loja</Link>
+        </div>
+
       </div>
     </div>
   );
