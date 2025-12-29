@@ -81,7 +81,7 @@ const OrderSuccess = () => {
   if (!order) return <div className="min-h-screen bg-[#121212] text-white flex items-center justify-center font-tech">PEDIDO NÃO ENCONTRADO</div>;
 
   return (
-    <div className="min-h-screen bg-[#121212] text-white font-tech py-12 px-4 relative">
+    <div className="min-h-screen bg-bs-black text-white font-tech py-8 px-4 relative">
       
       {/* NOTIFICAÇÃO FLUTUANTE (TOAST) */}
       {notification && (
